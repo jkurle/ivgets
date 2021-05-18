@@ -18,3 +18,5 @@ Config/testthat/edition: 3
 Depends: 
     gets,
     ivreg
+URL: https://github.com/jkurle/ivgets
+BugReports: https://github.com/jkurle/ivgets/issues
