@@ -1,16 +1,20 @@
 Package: ivgets
-Title: What the Package Does (One Line, Title Case)
+Title: General to Specific Modelling and Indicator Saturation in 2SLS Models
 Version: 0.0.0.9000
 Authors@R: 
-    person(given = "First",
-           family = "Last",
-           role = c("aut", "cre"),
-           email = "first.last@example.com",
-           comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: What the package does (one paragraph).
-License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
-    license
+    person("Kurle", "Jonas", email = "mail@jonaskurle.com", 
+    role = c("aut","cre"), comment = (ORCID = "0000-0003-2197-2012")))
+Description: Provides facilities of general to specific model selection for
+    exogenous regressors in 2SLS models. Furthermore, indicator saturation
+    methods can be used to detect outliers in the sample.
+License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
+Suggests: 
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
+Depends: 
+    gets,
+    ivreg
