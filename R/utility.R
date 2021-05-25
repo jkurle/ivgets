@@ -1,27 +1,27 @@
 #' Extract the first and second stage regressors of ivreg formula
 #'
-#' \code{extract_regressors} takes a formula object for [ivreg::ivreg()], i.e.
+#' \code{extract_variables} takes a formula object for [ivreg::ivreg()], i.e.
 #' in a format of \code{y ~ x1 + x2 | x1 + z2} and extracts the different
 #' elements in a list.
 #'
 #' @param formula A formula for the [ivreg::ivreg] function, i.e. in format
 #'   \code{y ~ x1 + x2 | z1 + z2}.
 #'
-#' @return \code{extract_regressors} returns a list with three components:
+#' @return \code{extract_variables} returns a list with three components:
 #'   \code{$yvar} stores the name of the dependent variable, \code{$first} the
-#'   names of the regressors of the first stage and \code{$second} of the second
-#'   stage regressors.
+#'   names of the regressors of the first stage and \code{$second} the names of
+#'   the second stage regressors.
 #'
 #' @export
 
-extract_regressors <- function(formula) {
+extract_variables <- function(formula) {
 
   # convert formula to character vector of length 1
   # use Reduce() to avoid length > 1 if formula is too long
   fml <- Reduce(paste, deparse(formula))
 
   # check that formula contains both "~" and "|" symbols
-  if (!(grepl("~", fml) && grepl("|", fml))) {
+  if (!(grepl("~", fml) && grepl("\\|", fml))) {
     stop(strwrap("The `formula` is not of the required format since it does not
           include both symbols `~` and `|`", prefix = " ", initial = ""))
   }
@@ -55,14 +55,25 @@ extract_regressors <- function(formula) {
 #' Takes ivreg formula and returns formula compatible with model selection
 #'
 #' \code{new_formula} takes a formula object for [ivreg::ivreg()], i.e. in a
-#' format of \code{y ~ x1 + x2 | x1 + z2} and returns a new formula and data
-#' suitable for model selection.
+#' format of \code{y ~ x1 + x2 | x1 + z2}, and returns a list with element
+#' suitable for model selection. For example, it updates the data by creating
+#' an intercept if specified in the formula, checks for collinearity among the
+#' regressors, and updates the formula accordingly.
 #'
-#' @inheritParams extract_regressors
+#' @inheritParams extract_variables
 #' @inheritParams ivgets
 #' @param data A data frame.
 #'
-#' @return A list
+#' @return A list with several named elements. Component \code{$fml} stores the
+#'   new baseline formula that will be used for model selection. Components
+#'   \code{y}, \code{x}, and \code{z} store the data of the dependent variable,
+#'   structural regressors, and excluded instruments. The entries
+#'   \code{$depvar}, \code{$x1}, \code{$x2}, \code{$z1}, and \code{$z2} contain
+#'   the names of the dependent variable, endogenous and exogenous regressors,
+#'   included and excluded instruments. \code{$dx1}, \code{$dx2}, \code{$dz1},
+#'   \code{$dz2} store the dimensions of the respective variables. Finally,
+#'   \code{$keep} and \code{$keep.names} contain the indices and names of the
+#'   regressors that will not be selected over.
 #'
 #' @export
 
@@ -71,6 +82,7 @@ new_formula <- function(formula, data, keep_exog) {
   if (!(is.numeric(keep_exog) | is.character(keep_exog) | is.null(keep_exog))) {
     stop("Argument 'keep_exog' must either be NULL, numeric, or a character.")
   }
+
   keep_intercept <- FALSE
   # keep_exog = selection of exogenous regressors that should not select over
   if (is.numeric(keep_exog)) {
@@ -78,7 +90,7 @@ new_formula <- function(formula, data, keep_exog) {
     if (length(setdiff(keep_exog, 0)) == 0) { # only keep intercept
       keep_names <- NULL
     } else {
-      keep_names <- colnames(df)[setdiff(keep_exog, 0)]
+      keep_names <- colnames(data)[setdiff(keep_exog, 0)]
     }
   } else if (is.character(keep_exog)) {
     keep_intercept <- ("Intercept" %in% keep_exog)
@@ -86,20 +98,19 @@ new_formula <- function(formula, data, keep_exog) {
       keep_names <- NULL
     } else {
       keep_names <- setdiff(keep_exog, "Intercept")
-      if (any(!(keep_names %in% colnames(df)))) {
-        stop("Argument 'keep_exog' specifies names that cannot be found in the
-           data frame.")
+      if (any(!(keep_names %in% colnames(data)))) {
+        stop("Argument 'keep_exog' specifies names that cannot be found in the data frame.")
       }
     }
   } else {
     keep_names <- NULL
   }
-  # keep_intercept is TRUE is keep_exog had index 0 or "Intercept"
+  # keep_intercept is TRUE if keep_exog had index 0 or "Intercept"
   # keep_names contains the names of variables excluding any intercept name
   # keep_names is NULL if no variables should be kept (except intercept maybe)
 
   # check formula: extract regressors and check presence of intercept
-  vars <- extract_regressors(formula = formula)
+  vars <- extract_variables(formula = formula)
 
   if (any(c("-1", "0") %in% vars$first)) {
     intercept1 <- FALSE
@@ -115,12 +126,10 @@ new_formula <- function(formula, data, keep_exog) {
   # throw errors for two specific cases; require (no) intercept to be specified
   # symmetrically for the first and second stage at the moment
   if (intercept2 == TRUE & intercept1 == FALSE) {
-    stop("If have intercept in the structural equation, it should also be in the
-         first stage.")
+    stop("If have intercept in the structural equation, it should also be in the first stage.")
   }
   if (intercept2 == FALSE & intercept1 == TRUE) {
-    stop("Using intercept as excluded instrument in the first stage is currently
-         not supported.")
+    stop("Using intercept as excluded instrument in the first stage is currently not supported.")
   }
 
   # extract the base variables (this excludes any intercept specifications)
@@ -137,14 +146,16 @@ new_formula <- function(formula, data, keep_exog) {
   z <- as.matrix(data[, z2_base, drop = FALSE], drop = FALSE)
 
   # check for perfect multicollinearity issues
+  # multicollinearity in original matrix
+  if (length(colnames(x)) > length(colnames(gets::dropvar(x, silent = TRUE)))) {
+    stop("Original formula specification has perfect collinearity. Please adjust regressors.")
+  }
   # create new structural equation regressor matrix
   if (intercept2) {
     xnames <- colnames(x)
     # check whether regressor named "Intercept" already present in formula
     if ("Intercept" %in% xnames) {
-      stop("Formula specification creates an intercept but regressor named
-           \"Intercept\" is also included in formula. Please specify \"-1\" in
-           the formula.")
+      stop("Formula specification creates an intercept but regressor named \"Intercept\" is also included in formula. Please specify \"-1\" in the formula.")
     }
     # add an intercept
     x <- cbind(1, x)
@@ -154,13 +165,18 @@ new_formula <- function(formula, data, keep_exog) {
     # "Intercept". If had intercept present before then the other one is
     # dropped.
     dropnames <- setdiff(xnames, colnames(xnew))
-    if (length(dropnames) > 1) { # rank deficient by more than 1
-      stop("Original structural equation had multicollinearity issues. Please
-           re-specify the initial model such that no multicollinearity arises.")
+    if (length(dropnames) > 1) { # rank deficient by more than 1 (should not happen)
+      stop("Original structural equation had multicollinearity issues. Please re-specify the initial model such that no multicollinearity arises.")
     }
     # dropnames can only have dropped a regressor that was perfectly collinear
     # with the intercept; so can delete that regressor from the exogenous regr.
     # but add the regressor Intercept
+    if (length(dropnames) == 1) { # rank deficient by 1
+      warning("Intercept has introduced collinearity. Drop one regressor: ", dropnames)
+    }
+    if (any(dropnames %in% keep_names)) {
+      stop("A regressor that was specified in 'keep_exog' has been dropped due to multicollinearity. Please re-specify model.")
+    }
     x <- xnew
     x1_base <- c("Intercept", setdiff(x1_base, dropnames))
     z1_base <- x1_base
@@ -201,7 +217,108 @@ new_formula <- function(formula, data, keep_exog) {
 
 }
 
+#' Function factory for creating indicators from their names
+#'
+#' \code{factory_indicators} creates a function that takes the name of an
+#' indicator and returns the corresponding indicator to be used in a regression.
+#' For user-specified indicators, it extracts the corresponding column from the
+#' uis matrix.
+#'
+#' @param n An integer specifying the length of the indicators.
+#'
+#' @return \code{factory_indicators} returns a function called \code{creator()}.
+#'
+#' @details Argument \code{n} should equal the number of observations in the
+#' data set which will be augmented with the indicators.
+#'
+#' The created function takes a name of an indicator and the original uis
+#' argument that was used in indicator saturation and returns the indicator.
 
+factory_indicators <- function(n) {
+
+  if (!is.numeric(n)) {
+    stop("Argument 'n' must be a single numeric value (integer).")
+  }
+  if (!identical(length(n), 1L)) {
+    stop("Argument 'n' must have length 1.")
+  }
+  if (!(n %% 1 == 0)) {
+    stop("Argument 'n' must be an integer.")
+  }
+  if (n < 1) {
+    stop("Argument 'n' must equal the sample size, so cannot be 0 or negative.")
+  }
+
+  creator <- function(name, uis) {
+
+    type <- stringr::str_extract(string = name, pattern = "^[[:alpha:]]+")
+    no <- as.numeric(stringr::str_extract(string = name,
+                                          pattern = "[1-9]([0-9]+)?"))
+    indicator <- NULL # initialise as NULL
+    if (type %in% c("iis", "sis", "tis") & (no > n)) {
+      stop("Specified iis, sis, or tis of length larger than sample size.")
+    }
+
+    if (identical(type, "iis")) {
+      indicator <- c(rep(0, times = (no - 1)), 1, rep(0, times = (n - no)))
+      indicator <- as.matrix(indicator, ncol = 1, nrow = n)
+      colnames(indicator) <- name
+
+    } else if (identical(type, "sis")) {
+
+      indicator <- c(rep(0, times = (no - 1)), rep(1, times = (n - no + 1)))
+      indicator <- as.matrix(indicator, ncol = 1, nrow = n)
+      colnames(indicator) <- name
+
+    } else if (identical(type, "tis")) {
+
+      m <- matrix(0,n,n)
+      v1n <- seq(1,n)
+      loop.indx <- 1:n
+      tmp <- function(i){
+        m[c(i:n),i] <<- v1n[1:c(n-i+1)]
+      }
+      sapply(loop.indx,tmp)
+      indicator <- m[, no]
+      indicator <- as.matrix(indicator, ncol = 1, nrow = n)
+      colnames(indicator) <- name
+
+    } else if (is.matrix(uis)) { # uis is a matrix; could be named or not
+
+      if (identical(type, "uisxreg")) { # indicator from unnamed matrix uis
+
+        indicator <- uis[, no, drop = FALSE] # retrieve by indicator index
+
+      } else { # indicator from named matrix uis
+
+        indicator <- uis[, name, drop = FALSE] # retrieve by indicator name
+
+      } # end if uis is matrix
+
+    } else if (is.list(uis)) { # uis is a list of matrices; cols must be named
+
+      for (matx in seq_along(uis)) {
+
+        if (name %in% colnames(uis[[matx]])) { # found
+          indicator <- uis[[matx]][, name, drop = FALSE] # retrieve by ind name
+          break
+        } # end if found
+
+      } # end for through all matrices in uis
+
+    } # end if uis is list
+
+    if (is.null(indicator)) {
+      stop("Retained indicator could not be created or found.")
+    } else {
+      return(indicator)
+    } # check that indicator has really been found
+
+  }
+
+  return(creator) # return a function
+
+}
 
 
 

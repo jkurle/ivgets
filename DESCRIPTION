@@ -13,6 +13,8 @@ LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
 Suggests: 
+    knitr,
+    rmarkdown,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
 Depends: 
@@ -20,3 +22,6 @@ Depends:
     ivreg
 URL: https://github.com/jkurle/ivgets
 BugReports: https://github.com/jkurle/ivgets/issues
+Imports: 
+    stringr
+VignetteBuilder: knitr

@@ -13,8 +13,8 @@ remove.packages("gets")
 install_github("jkurle/gets", ref = "2sls-v2", subdir = "gets")
 
 # 2sls-v2 incorporates the changes discussed with Genaro
-  # diagnostics explicitly in user diagnostics to allow for rejecting being good
-  # in arx() deleting colnames revert and put into user estimator; handle empty
+# diagnostics explicitly in user diagnostics to allow for rejecting being good
+# in arx() deleting colnames revert and put into user estimator; handle empty
 # try new function for ivregFun to solve matching problem of order and names
 
 ivregFun <- function(y, x, z, formula, ...) {
@@ -143,7 +143,7 @@ i <- getsFun(y, x, user.estimator = list(name = "ivregFun", z = z, formula = for
              user.diagnostics = list(name = "ivDiag", pval = c(0.05, 0.05, 0.05),
                                      is.reject.bad = c(FALSE, FALSE, TRUE),
                                      weak = TRUE, overid = TRUE))
-isat(y, mxreg = x, mc = FALSE, iis = TRUE, sis = FALSE, tis = FALSE, t.pval = 0.01,
+isat(y, mxreg = x, mc = FALSE, iis = TRUE, sis = TRUE, tis = FALSE, t.pval = 0.001,
      user.estimator = list(name = "ivregFun", z = z, formula = form),
      user.diagnostics = list(name = "ivDiag", pval = c(0.05), is.reject.bad = TRUE, overid = TRUE),
      ar.LjungB = list(lag = 1, pval = 0.05), arch.LjungB = list(lag = 1, pval = 0.05), normality.JarqueB = 0.05)
@@ -231,14 +231,14 @@ ivgets <- function(
 
 
 f <- function(# ivreg::ivreg arguments
-              formula, data, subset, na.action, weights, offset, contrasts, model, x, y,
-              # gets::isat arguments
-              iis, sis, tis, uis, blocks, ratio.threshold, max.block.size, t.pval, wald.pval, do.pet,
-              ar.LjungB, arch.LjungB, normality.JarqueB, info.method, include.gum, include.1cut,
-              include.empty, max.paths, parallel.options, turbo, tol, LAPACK, max.regs, print.searchinfo,
-              plot, alarm,
-              # own arguments
-              overid, weak) {
+  formula, data, subset, na.action, weights, offset, contrasts, model, x, y,
+  # gets::isat arguments
+  iis, sis, tis, uis, blocks, ratio.threshold, max.block.size, t.pval, wald.pval, do.pet,
+  ar.LjungB, arch.LjungB, normality.JarqueB, info.method, include.gum, include.1cut,
+  include.empty, max.paths, parallel.options, turbo, tol, LAPACK, max.regs, print.searchinfo,
+  plot, alarm,
+  # own arguments
+  overid, weak) {
 
   # extract formula
   # convert formula to character vector of length 1
@@ -272,10 +272,41 @@ f <- function(# ivreg::ivreg arguments
 
 
 
+# what if give uis
+ret <- isat(y, mxreg = x, mc = FALSE, iis = FALSE, sis = FALSE, tis = FALSE, t.pval = 0.001,
+            user.estimator = list(name = "ivregFun", z = z, formula = form),
+            user.diagnostics = list(name = "ivDiag", pval = c(0.05), is.reject.bad = TRUE, overid = TRUE),
+            ar.LjungB = list(lag = 1, pval = 0.05), arch.LjungB = list(lag = 1, pval = 0.05),
+            normality.JarqueB = 0.05, uis = diag(100))
 
 
+u <- diag(100)
+unames <- NULL
+for(i in 1:100) {unames <- c(unames, paste("uis", i, sep = ""))}
+colnames(u) <- unames
+
+ret <- isat(y, mxreg = x, mc = FALSE, iis = FALSE, sis = FALSE, tis = FALSE, t.pval = 0.001,
+            user.estimator = list(name = "ivregFun", z = z, formula = form),
+            user.diagnostics = list(name = "ivDiag", pval = c(0.05), is.reject.bad = TRUE, overid = TRUE),
+            ar.LjungB = list(lag = 1, pval = 0.05), arch.LjungB = list(lag = 1, pval = 0.05),
+            normality.JarqueB = 0.05, uis = u)
+
+# what if given as list? (must be regressors named)
+p <- generate_param(10, 2, 3, beta = c(6, 5, 0, 0, 0, 0, 0, 0, 0, 0, -4, 3), sigma = 2)
+d <- generate_data(p, 100)
+df <- d$data
+y <- as.vector(df[, "y"])
+x <- as.matrix(df[, c("x1", "x2","x3","x4","x5","x6","x7","x8","x9","x10","x11", "x12")])
+z <- as.matrix(df[, c("z11","z12", "z13")])
+form <- y ~ -1 + x1 + x2 + x3 + x4 + x5 + x6 + x7 + x8 + x9 + x10 + x11 + x12 | -1 + x1 + x2 + x3 + x4 + x5 + x6 + x7 + x8 + x9 + x10 + z11 + z12 + z13
 
 
+ret <- isat(y, mxreg = x, mc = FALSE, iis = FALSE, sis = FALSE, tis = FALSE, t.pval = 0.001,
+            user.estimator = list(name = "ivregFun", z = z, formula = form),
+            user.diagnostics = list(name = "ivDiag", pval = c(0.05), is.reject.bad = TRUE, overid = TRUE),
+            ar.LjungB = list(lag = 1, pval = 0.05), arch.LjungB = list(lag = 1, pval = 0.05),
+            normality.JarqueB = 0.05, uis = list(u[,1:15], u[, 16:100]))
 
 
-
+test <- ivisat(formula = form, data = df, overid = 0.05, uis = list(u[,1:15], u[, 16:100]), iis = FALSE, ar.LjungB = list(lag = 1, pval = 0.05), arch.LjungB = list(lag = 1, pval = 0.05),
+       normality.JarqueB = 0.05)

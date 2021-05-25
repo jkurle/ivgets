@@ -18,13 +18,24 @@ be selected over. Default \code{NULL} means that selection is over all
 exogenous regressors. If an intercept has been specified in the
 \code{formula} but is not already included in the \code{data}, then it can be
 kept by either including the index \code{0} or the character
-\code{"(Intercept)"}, respectively, as an element in \code{keep_exog}.}
+\code{"Intercept"}, respectively, as an element in \code{keep_exog}.}
 }
 \value{
-A list
+A list with several named elements. Component \code{$fml} stores the
+new baseline formula that will be used for model selection. Components
+\code{y}, \code{x}, and \code{z} store the data of the dependent variable,
+structural regressors, and excluded instruments. The entries
+\code{$depvar}, \code{$x1}, \code{$x2}, \code{$z1}, and \code{$z2} contain
+the names of the dependent variable, endogenous and exogenous regressors,
+included and excluded instruments. \code{$dx1}, \code{$dx2}, \code{$dz1},
+\code{$dz2} store the dimensions of the respective variables. Finally,
+\code{$keep} and \code{$keep.names} contain the indices and names of the
+regressors that will not be selected over.
 }
 \description{
 \code{new_formula} takes a formula object for \code{\link[ivreg:ivreg]{ivreg::ivreg()}}, i.e. in a
-format of \code{y ~ x1 + x2 | x1 + z2} and returns a new formula and data
-suitable for model selection.
+format of \code{y ~ x1 + x2 | x1 + z2}, and returns a list with element
+suitable for model selection. For example, it updates the data by creating
+an intercept if specified in the formula, checks for collinearity among the
+regressors, and updates the formula accordingly.
 }
