@@ -4,7 +4,7 @@
 \alias{isat.ivreg}
 \title{Indicator saturation modelling on an ivreg object}
 \usage{
-isat.ivreg(
+\method{isat}{ivreg}(
   ivreg_object,
   iis = TRUE,
   sis = FALSE,

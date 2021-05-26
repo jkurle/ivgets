@@ -448,7 +448,7 @@ test_that("factory_indicators() works correctly", {
     ind <- c1(name = colnames(uismatrix)[i], uis = uismatrix)
     expect_identical(ind, uismatrix[, i, drop = FALSE])
   }
-  # test uis as list with iis and sis indiacators
+  # test uis as list with iis and sis indicators
   m1 <- diag(5)
   names1 <- c("myiis1", "myiis2", "myiis3", "myiis4", "myiis5")
   colnames(m1) <- names1

@@ -17,6 +17,9 @@ test_that("ivisat() works correctly", {
   fml <- y ~ -1+cons+x1+x2 | -1+cons+x1+z2+z3
   model <- ivreg::ivreg(formula = fml, data = df) # model seems consistent
 
+  # iis and others often don't run here because blocks take away too many obs
+  # in these cases use max.block.size argument
+
   m1 <- ivisat(formula = fml, data = df, iis = TRUE, print.searchinfo = FALSE)
   # check basic output
   expect_type(m1, "list")
@@ -31,6 +34,7 @@ test_that("ivisat() works correctly", {
                        c("cons", "x1", "x2", "iis16", "iis18")))
   m1$selection$time.started <- NULL
   m1$selection$time.finished <- NULL
+  m1$selection$date <- NULL
   expect_snapshot_output(m1)
 
   m2 <- ivisat(formula = fml, data = df, iis = FALSE, sis = TRUE,
@@ -44,6 +48,7 @@ test_that("ivisat() works correctly", {
   expect_null(m2$selection$ISnames)
   m2$selection$time.started <- NULL
   m2$selection$time.finished <- NULL
+  m2$selection$date <- NULL
   expect_snapshot_output(m2)
 
   m3 <- ivisat(formula = fml, data = df, iis = FALSE, sis = FALSE, tis = TRUE,
@@ -56,6 +61,96 @@ test_that("ivisat() works correctly", {
   expect_true(setequal(names(m3$final$coefficients),
                        c("cons", "x1", "x2", "tis8", "tis9", "tis12", "tis16",
                          "tis17", "tis19", "tis20")))
+  m3$selection$time.started <- NULL
+  m3$selection$time.finished <- NULL
+  m3$selection$date <- NULL
+  expect_snapshot_output(m3)
+
+  # test uis; use iis indicators but call them different
+  # same model setup as before, so should retain "my16" and "my18"
+  uismatrix <- diag(50)
+  names <- NULL
+  for (i in 1:50) {
+    new <- paste("my", i, sep = "")
+    names <- cbind(names, new)
+  }
+  colnames(uismatrix) <- names
+  m4 <- ivisat(formula = fml, data = df, iis = FALSE, print.searchinfo = FALSE,
+               uis = uismatrix)
+  expect_type(m4, "list")
+  expect_length(m4, 2L)
+  expect_named(m4, c("selection", "final"))
+  expect_identical(class(m4$final), "ivreg")
+  expect_identical(class(m4$selection), "isat")
+  expect_identical(m4$selection$ISnames, c("my16", "my18"))
+  expect_true(all(m4$selection$ISnames %in% names(m4$final$coefficients)))
+  # order may be different, so more robust to check they are the same sets
+  expect_true(setequal(names(m4$final$coefficients),
+                       c("cons", "x1", "x2", "my16", "my18")))
+  m4$selection$time.started <- NULL
+  m4$selection$time.finished <- NULL
+  m4$selection$date <- NULL
+  expect_snapshot_output(m4)
+
+  # test uis as list with iis indicators
+  uislist <- list(matrix1 = uismatrix[, 1:25], matrix2 = uismatrix[, 26:50])
+  m5 <- ivisat(formula = fml, data = df, iis = FALSE, print.searchinfo = FALSE,
+               uis = uislist)
+  expect_type(m5, "list")
+  expect_length(m5, 2L)
+  expect_named(m5, c("selection", "final"))
+  expect_identical(class(m5$final), "ivreg")
+  expect_identical(class(m5$selection), "isat")
+  expect_identical(m5$selection$ISnames, c("my16", "my18"))
+  expect_true(all(m5$selection$ISnames %in% names(m5$final$coefficients)))
+  # order may be different, so more robust to check they are the same sets
+  expect_true(setequal(names(m5$final$coefficients),
+                       c("cons", "x1", "x2", "my16", "my18")))
+  m5$selection$time.started <- NULL
+  m5$selection$time.finished <- NULL
+  m5$selection$date <- NULL
+  expect_snapshot_output(m5)
+
+  # test diagnostics
+  expect_silent(m6 <- ivisat(formula = fml, data = df, iis = TRUE,
+                              print.searchinfo = FALSE,
+                              overid = 0.05, weak = 0.05))
+  # make diagnostics unlikely to pass
+  expect_warning(m7 <- ivisat(formula = fml, data = df, iis = TRUE,
+                              print.searchinfo = FALSE,
+                              overid = 0.95, weak = 0.05),
+                 "No selection was undertaken")
+  expect_identical(m7$selection$no.of.estimations,
+                   m7$selection$no.of.getsFun.calls)
+  expect_identical(m7$selection$no.of.estimations, 3)
+  expect_identical(m7$final, NULL)
+
+})
+
+test_that("isat.ivreg() works correctly", {
+
+  # since this function builds on ivisat(), do not test too much here
+
+  # set up a 2SLS structure (broadly)
+  set.seed(123)
+  df <- data.frame(u = stats::rnorm(50))
+  df$z2 <- stats::rnorm(50) # excluded instrument
+  df$z3 <- stats::rnorm(50) # excluded instrument
+  df$r <- 0.5 * df$u + stats::rnorm(50) # so r and u are correlated
+  df$x2 <- df$z2 - 0.5*df$z3 + df$r # endogenous regressor, relevant
+  df$cons <- 1 # intercept, relevant
+  df$x1 <- stats::rnorm(50) # exogenous regressor, relevant
+  df$y <- df$cons + 2*df$x1 - df$x2 + df$u # coefficients c(1,2,-1)
+  # delete unobserved errors
+  df$u <- NULL
+  df$r <- NULL
+  # GUM
+  fml <- y ~ -1+cons+x1+x2 | -1+cons+x1+z2+z3
+  base <- ivreg::ivreg(formula = fml, data = df) # model seems consistent
+
+  # now do selection from base model
+  isat(base, print.searchinfo = FALSE)
+
 
 
 
@@ -68,3 +163,4 @@ test_that("ivisat() works correctly", {
 
 
 })
+

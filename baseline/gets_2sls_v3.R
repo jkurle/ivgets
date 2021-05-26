@@ -10,7 +10,8 @@ library(devtools)
 #gh_install_packages("jkurle/gets")
 #gh_list_packages(username = "gsucarrat")
 remove.packages("gets")
-install_github("jkurle/gets", ref = "2sls-v2", subdir = "gets")
+#install_github("jkurle/gets", ref = "2sls-v2", subdir = "gets")
+install_github("jkurle/gets", ref = "2sls-v3", subdir = "gets")
 
 # 2sls-v2 incorporates the changes discussed with Genaro
 # diagnostics explicitly in user diagnostics to allow for rejecting being good

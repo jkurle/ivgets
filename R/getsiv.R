@@ -17,6 +17,7 @@
 #' between 0 and 1. In the latter case, the test is conducted using this value
 #' as the significance level.
 #'
+#' @importFrom gets gets
 #' @export
 
 ivgets <- function(
@@ -127,6 +128,7 @@ ivgets <- function(
 #' @param ivreg_object An object of class \code{"ivreg"}, as returned by
 #' [ivreg::ivreg()].
 #'
+#' @importFrom gets gets
 #' @export
 
 gets.ivreg <- function(

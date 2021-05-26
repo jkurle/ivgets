@@ -6,6 +6,7 @@
 #'   matrices must have named columns that should not overlap with column names
 #'   of any other matrices in the list.
 #'
+#' @importFrom gets isat
 #' @export
 
 ivisat <- function(
@@ -96,43 +97,48 @@ ivisat <- function(
                   print.searchinfo = print.searchinfo, plot = plot,
                   alarm = alarm)
 
-  # create indicators to run final model
-  ISnames <- a$ISnames # is NULL if no indicators were selected
-  #iisnames <- ISnames[grepl(x = ISnames, pattern = "^iis[1-9]+$")]
-  #sisnames <- ISnames[grepl(x = ISnames, pattern = "^sis[1-9]+$")]
-  #tisnames <- ISnames[grepl(x = ISnames, pattern = "^tis[1-9]+$")]
-  # have length zero if no such pattern found
+  if (a$no.of.estimations == a$no.of.getsFun.calls) {
+    warning("No selection was undertaken. Probable reason: https://github.com/gsucarrat/gets/issues/39")
+    out <- list(selection = a, final = NULL)
+  } else {
+    # create indicators to run final model
+    ISnames <- a$ISnames # is NULL if no indicators were selected
+    #iisnames <- ISnames[grepl(x = ISnames, pattern = "^iis[1-9]+$")]
+    #sisnames <- ISnames[grepl(x = ISnames, pattern = "^sis[1-9]+$")]
+    #tisnames <- ISnames[grepl(x = ISnames, pattern = "^tis[1-9]+$")]
+    # have length zero if no such pattern found
 
-  indicators <- NULL
-  if (!is.null(ISnames)) {
+    indicators <- NULL
+    if (!is.null(ISnames)) {
 
-    creator <- factory_indicators(n = NROW(data))
-    for (ind in seq_along(ISnames)) {
-      indicator <- creator(name = ISnames[ind], uis = uis)
-      indicators <- cbind(indicators, indicator)
-    } # end for
+      creator <- factory_indicators(n = NROW(data))
+      for (ind in seq_along(ISnames)) {
+        indicator <- creator(name = ISnames[ind], uis = uis)
+        indicators <- cbind(indicators, indicator)
+      } # end for
+
+    }
+
+    vars_sel <- names(a$specific.spec)
+    x1_sel <- intersect(setup$x1, vars_sel)
+    x2_sel <- setup$x2 # do not select over endog. regressors, so stays the same
+    x1_sel <- union(x1_sel, ISnames) # if NULL then nothing is added
+    z1_sel <- x1_sel
+    z2_sel <- setup$z2 # do not select over excluded instr., so stays the same
+    x_sel <- paste(c("-1", x1_sel, x2_sel), sep = "", collapse = "+")
+    z_sel <- paste(c("-1", z1_sel, z2_sel), sep = "", collapse = "+")
+    fml_sel <- paste(c(setup$depvar, x_sel), sep = "", collapse = " ~ ")
+    fml_sel <- paste(c(fml_sel, z_sel), sep = "", collapse = " | ")
+    y <- setup$y
+    x <- setup$x
+    z <- setup$z
+    d <- data.frame(cbind(y, x, indicators, z))
+    fin <- ivreg::ivreg(formula = as.formula(fml_sel), data = d)
+    out <- list(selection = a, final = fin)
 
   }
 
-  vars_sel <- names(a$specific.spec)
-  x1_sel <- intersect(setup$x1, vars_sel)
-  x2_sel <- setup$x2 # do not select over endog. regressors, so stays the same
-  x1_sel <- union(x1_sel, ISnames) # if NULL then nothing is added
-  z1_sel <- x1_sel
-  z2_sel <- setup$z2 # do not select over excluded instr., so stays the same
-  x_sel <- paste(c("-1", x1_sel, x2_sel), sep = "", collapse = "+")
-  z_sel <- paste(c("-1", z1_sel, z2_sel), sep = "", collapse = "+")
-  fml_sel <- paste(c(setup$depvar, x_sel), sep = "", collapse = " ~ ")
-  fml_sel <- paste(c(fml_sel, z_sel), sep = "", collapse = " | ")
-  y <- setup$y
-  x <- setup$x
-  z <- setup$z
-  d <- data.frame(cbind(y, x, indicators, z))
-  fin <- ivreg::ivreg(formula = as.formula(fml_sel), data = d)
-
-  out <- list(selection = a, final = fin)
   class(out) <- "ivisat"
-
   return(out)
 
 }
@@ -148,8 +154,8 @@ ivisat <- function(
 #' @param ivreg_object An object of class \code{"ivreg"}, as returned by
 #' [ivreg::ivreg()].
 #'
+#' @importFrom gets isat
 #' @export
-#'
 
 isat.ivreg <- function(
   ivreg_object,
