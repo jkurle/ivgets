@@ -131,6 +131,7 @@ ivgets <- function(
 #' @importFrom gets gets
 #' @export
 
+
 gets.ivreg <- function(
   ivreg_object,
   # gets::getsFun() arguments
@@ -173,29 +174,3 @@ gets.ivreg <- function(
   return(aux)
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
