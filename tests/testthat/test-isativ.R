@@ -149,18 +149,48 @@ test_that("isat.ivreg() works correctly", {
   base <- ivreg::ivreg(formula = fml, data = df) # model seems consistent
 
   # now do selection from base model
-  isat(base, print.searchinfo = FALSE)
+  s1 <- isat(base, print.searchinfo = FALSE)
+  # check basic output
+  expect_type(s1, "list")
+  expect_length(s1, 2L)
+  expect_named(s1, c("selection", "final"))
+  expect_identical(class(s1$final), "ivreg")
+  expect_identical(class(s1$selection), "isat")
+  expect_identical(s1$selection$ISnames, c("iis16", "iis18"))
+  expect_true(all(s1$selection$ISnames %in% names(s1$final$coefficients)))
+  # order may be different, so more robust to check they are the same sets
+  expect_true(setequal(names(s1$final$coefficients),
+                       c("cons", "x1", "x2", "iis16", "iis18")))
+  # s1 does the same as m1 above
+  m1 <- ivisat(formula = fml, data = df, iis = TRUE, print.searchinfo = FALSE)
 
-
-
-
-
-
-
-
-
-
-
+  s1$selection$time.started <- NULL
+  s1$selection$time.finished <- NULL
+  s1$selection$date <- NULL
+  m1$selection$time.started <- NULL
+  m1$selection$time.finished <- NULL
+  m1$selection$date <- NULL
+  # m1 doesn't record rownames of user.estimator$z (not sure why not)
+  rownames(s1$selection$aux$user.estimator$z) <- NULL
+  attr(s1$selection$aux$user.estimator$formula, ".Environment") <- NULL
+  attr(m1$selection$aux$user.estimator$formula, ".Environment") <- NULL
+  rownames(s1$selection$aux$arguments$mxreg) <- NULL
+  rownames(s1$selection$aux$arguments$user.estimator$z) <- NULL
+  attr(m1$selection$aux$arguments$user.estimator$formula, '.Environment') <- NULL
+  attr(s1$selection$aux$arguments$user.estimator$formula, '.Environment') <- NULL
+  attr(m1$final$formula, '.Environment') <- NULL
+  attr(s1$final$formula, '.Environment') <- NULL
+  attr(m1$final$terms$regressors, '.Environment') <- NULL
+  attr(s1$final$terms$regressors, '.Environment') <- NULL
+  attr(m1$final$terms$instruments, '.Environment') <- NULL
+  attr(s1$final$terms$instruments, '.Environment') <- NULL
+  attr(s1$final$terms$full, '.Environment') <- NULL
+  attr(m1$final$terms$full, '.Environment') <- NULL
+  attr(attr(m1$final$model, 'terms'), '.Environment') <- NULL
+  attr(attr(s1$final$model, 'terms'), '.Environment') <- NULL
+  attr(m1$final$model, 'row.names') <- as.character(attr(m1$final$model, 'row.names'))
+  attr(s1$selection$aux$arguments$y, "names") <- NULL
+  expect_identical(m1, s1)
 
 })
 
