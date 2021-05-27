@@ -18,6 +18,7 @@ Suggests:
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
 Depends: 
+    R (>= 2.10),
     gets,
     ivreg
 URL: https://github.com/jkurle/ivgets
@@ -25,3 +26,4 @@ BugReports: https://github.com/jkurle/ivgets/issues
 Imports: 
     stringr
 VignetteBuilder: knitr
+Remotes: github::jkurle/gets/gets#3
