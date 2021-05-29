@@ -99,7 +99,7 @@ indicators <- isat(base, iis = TRUE, t.pval = 1/100, print.searchinfo = FALSE)
 print(indicators$final)
 #> 
 #> Call:
-#> ivreg::ivreg(formula = as.formula(fml_sel), data = d)
+#> ivreg(formula = as.formula(fml_sel), data = d)
 #> 
 #> Coefficients:
 #>       x1        x2        x3        x4        x5        x6        x7        x8  
@@ -139,7 +139,7 @@ selection <- gets(indicators$final, keep_exog = indicators$selection$ISnames, pr
 print(selection$final)
 #> 
 #> Call:
-#> ivreg::ivreg(formula = as.formula(fml_sel), data = d)
+#> ivreg(formula = as.formula(fml_sel), data = d)
 #> 
 #> Coefficients:
 #>     x1      x2    iis9   iis11   iis43   iis73     x11  
