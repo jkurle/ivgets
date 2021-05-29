@@ -39,15 +39,16 @@ ui <- fluidPage(
 server <- function(input, output) {
 
   # generate new outliers according to settings when "generate" pressed
-  df <- eventReactive(input$generate, {
+  df <- reactive({
 
-    data <- ivgets::artificial2sls_shiny
+    data <- artificial2sls_shiny
 
     outliers <- sample(1:100, size = input$share * 100, replace = FALSE)
     outliers <- outliers[order(outliers)]
 
     size <- sample(c(input$magnitude, -input$magnitude),
-                   size = length(outliers), replace = TRUE)
+                   size = length(outliers), replace = TRUE,
+                   prob = c(1-input$negative, input$negative))
 
     data[outliers, "y"] <- data[outliers, "y"] - data[outliers, "u"] + size
     data[outliers, "u"] <- data[outliers, "u"] - data[outliers, "u"] + size
@@ -58,66 +59,61 @@ server <- function(input, output) {
 
   })
 
-  critical <- eventReactive(input$generate, {
+  # data frame for the lines
+  linesdf <- data.frame(matrix(c(0,0,0,0), ncol = 4, nrow = 1))
+  colnames(linesdf) <- c("x1", "y1", "x2", "y2")
+
+  critical <- reactive({
     qnorm(p = input$tpval/2, lower.tail = FALSE)
   })
 
-  ylimits <- eventReactive(input$generate, {
+  ylimits <- reactive({
     lim <- max(critical(), input$magnitude)
     c(-lim, lim)
   })
 
+  # create matrix for detected outlier lines
+  iislines <- reactive({
+
+    selectnames <- model()$selection$ISnames
+    selectnum <- as.numeric(stringr::str_extract(string = selectnames, pattern = "[1-9]([0-9]+)?"))
+    selectdf <- data.frame(df()[selectnum, "u", drop = FALSE])
+    selectdf$y2 <- selectdf$u
+    selectdf$u <- NULL
+    selectdf$y1 <- 0
+    selectdf$x1 <- selectnum
+    selectdf$x2 <- selectnum
+
+  })
+
+  #selectnames <- model()$selection$ISnames
+  #
+
+
+
   output$errors <- renderPlot({
-    orig.data <- artificial2sls
-    orig.data$is.outlier <- 0
-    orig.data$is.outlier <- factor(orig.data$is.outlier, levels = c("0", "1"))
-    uscatter <- ggplot(data = orig.data) +
+
+    vlines <- data.frame(matrix(c(0,0,0,0), ncol = 4, nrow = 1))
+    colnames(vlines) <- c("x1", "y1", "x2", "y2")
+
+    uscatter <- ggplot(data = df()) +
       geom_point(aes(x = id, y = u, color = is.outlier), size = 2) +
       scale_color_manual(values = c("blue", "red"), labels = c("No", "Yes")) +
-      coord_cartesian(xlim = c(0, 100), ylim = c(-2.576, 2.576)) +
+      coord_cartesian(xlim = c(0, 100), ylim = ylimits()) +
       ggtitle(label = "True Errors") +
       theme(plot.title = element_text(hjust = 0.5)) +
       xlab(label = "Index") + ylab(label = "Magnitude of Error") +
       guides(colour = guide_legend(title = "Outlier")) +
-      geom_hline(aes(yintercept = -2.576, lty = "Lower")) +
-      geom_hline(aes(yintercept = 2.576, lty = "Upper")) +
-      scale_linetype_manual(name = "Cutoff", values = c("dashed", "dashed"))
+      geom_hline(aes(yintercept = -critical(), lty = "Lower")) +
+      geom_hline(aes(yintercept = critical(), lty = "Upper")) +
+      scale_linetype_manual(name = "Cutoff", values = c("dashed", "dashed")) +
+      geom_segment(data = vlines, aes(x = x1, y = y1, xend = x2, yend = y2),
+                   colour = "green")
+
     return(uscatter)
   })
 
-  output$errors <- renderPlot({
 
-    # if(input$generate == 0) {
-    #   sudata <- artificial2sls
-    #   sudata$id <- 1:100
-    #   sudata$is.outlier <- 0
-    #   sudata$is.outlier <- as.factor(sudata$is.outlier)
-    #   uscatter <- ggplot(data = sudata) +
-    #     geom_point(aes(x = id, y = u, color = is.outlier), size = 2) +
-    #     scale_color_manual(values = c("blue", "red"), labels = c("No", "Yes")) +
-    #     coord_cartesian(xlim = c(0, 100), ylim = c(-2.576, 2.576)) +
-    #     ggtitle(label = "True Errors") +
-    #     theme(plot.title = element_text(hjust = 0.5)) +
-    #     xlab(label = "Index") + ylab(label = "Magnitude of Error") +
-    #     guides(colour = guide_legend(title = "Outlier")) +
-    #     geom_hline(aes(yintercept = -2.576, lty = "Lower")) +
-    #     geom_hline(aes(yintercept = 2.576, lty = "Upper")) +
-    #     scale_linetype_manual(name = "Cutoff", values = c("dashed", "dashed"))
-    #   return(uscatter)
-    # } else {
-      uscatter <- ggplot(data = df()) +
-        geom_point(aes(x = id, y = u, color = is.outlier), size = 2) +
-        scale_color_manual(values = c("blue", "red"), labels = c("No", "Yes")) +
-        coord_cartesian(xlim = c(0, 100), ylim = ylimits()) +
-        ggtitle(label = "True Errors") +
-        theme(plot.title = element_text(hjust = 0.5)) +
-        xlab(label = "Index") + ylab(label = "Magnitude of Error") +
-        guides(colour = guide_legend(title = "Outlier")) +
-        geom_hline(aes(yintercept = -critical(), lty = "Lower")) +
-        geom_hline(aes(yintercept = critical(), lty = "Upper")) +
-        scale_linetype_manual(name = "Cutoff", values = c("dashed", "dashed"))
-      return(uscatter)
-    # }
 
 
     # if (input$run > 0) {
@@ -136,8 +132,6 @@ server <- function(input, output) {
     #     scale_linetype_manual("Detected", values = c("Detected" = 2))
     #   return(rev)
     #}
-
-  })
 
   # run model when press "run"
   model <- eventReactive(input$run, {
