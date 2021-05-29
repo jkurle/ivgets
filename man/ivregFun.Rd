@@ -4,7 +4,7 @@
 \alias{ivregFun}
 \title{User estimator ivreg for getsFun() and isat()}
 \usage{
-ivregFun(y, x, z, formula)
+ivregFun(y, x, z, formula, tests)
 }
 \arguments{
 \item{y}{A numeric vector with no missing values.}

@@ -19,7 +19,7 @@
 #'
 #' @export
 
-ivregFun <- function(y, x, z, formula) {
+ivregFun <- function(y, x, z, formula, tests) {
 
   # extract formula
   # convert formula to character vector of length 1
@@ -77,7 +77,11 @@ ivregFun <- function(y, x, z, formula) {
     sigma2 <- sum(tmp$residuals^2) / tmp$nobs
     # assume normality of first stage errors for likelihood as Autometrics does
     result$logl <- - (result$n / 2) * (1 + log(2*pi) + log(sigma2))
-    result$diag <- summary(tmp)$diagnostics
+    if (tests == TRUE) {
+      result$diag <- summary(tmp)$diagnostics
+    } else {
+      result$diag <- NULL
+    }
     result$residuals <- residuals(tmp)
     result$std.residuals <- residuals(tmp) / tmp$sigma
 

@@ -40,8 +40,13 @@ ivgets <- function(
   setup <- new_formula(formula = formula, data = data, keep_exog = keep_exog)
 
   # user estimator
+  if (is.null(overid) & is.null(weak)) {
+    test <- FALSE
+  } else {
+    test <- TRUE
+  }
   userest <- list(name = ivgets::ivregFun, z = setup$z,
-                  formula = as.formula(setup$fml))
+                  formula = as.formula(setup$fml), test = test)
 
   # user diagnostics
   is.reject.bad <- NULL
