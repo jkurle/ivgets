@@ -38,6 +38,13 @@ ui <- fluidPage(
 
 server <- function(input, output) {
 
+  observeEvent(input$run, {
+    showModal(modalDialog("Doing a function"))
+    Sys.sleep(1)
+    removeModal()
+  })
+
+
   # generate new outliers according to settings when "generate" pressed
   df <- reactive({
 
