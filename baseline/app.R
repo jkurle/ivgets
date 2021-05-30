@@ -12,6 +12,7 @@ set.seed(14)
 # formula stays the same
 fml <- y ~ -1+x1+x2+x11 | -1+x1+x2+z11+z12
 
+
 # user interface
 ui <- fluidPage(
 
@@ -37,6 +38,13 @@ ui <- fluidPage(
 )
 
 server <- function(input, output) {
+
+  observeEvent(input$run, {
+    showModal(modalDialog("Doing a function"))
+    Sys.sleep(1)
+    removeModal()
+  })
+
 
   # generate new outliers according to settings when "generate" pressed
   df <- reactive({
