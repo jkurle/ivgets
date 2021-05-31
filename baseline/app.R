@@ -5,12 +5,16 @@ library(ivgets)
 library(ggplot2)
 library(stats)
 library(stringr)
+library(waiter)
 # at the moment, data stays the same and user cannot re-generate new random data
 # reason is that this would require the r2sls package, which is not yet released
 set.seed(14)
 
 # formula stays the same
 fml <- y ~ -1+x1+x2+x11 | -1+x1+x2+z11+z12
+
+# load data
+original <- artificial2sls_shiny
 
 
 # user interface
@@ -32,124 +36,181 @@ ui <- fluidPage(
   actionButton(inputId = "run", label = "Run"),
 
   plotOutput("errors"),
-  verbatimTextOutput("detected")
-
+  textOutput("outliers"),
+  textOutput("detected"),
+  tableOutput("performance")
 
 )
 
 server <- function(input, output) {
 
-  observeEvent(input$run, {
-    showModal(modalDialog("Doing a function"))
-    Sys.sleep(1)
-    removeModal()
-  })
-
-
-  # generate new outliers according to settings when "generate" pressed
-  df <- reactive({
-
-    data <- artificial2sls_shiny
-
-    outliers <- sample(1:100, size = input$share * 100, replace = FALSE)
-    outliers <- outliers[order(outliers)]
-
-    size <- sample(c(input$magnitude, -input$magnitude),
-                   size = length(outliers), replace = TRUE,
-                   prob = c(1-input$negative, input$negative))
-
-    data[outliers, "y"] <- data[outliers, "y"] - data[outliers, "u"] + size
-    data[outliers, "u"] <- data[outliers, "u"] - data[outliers, "u"] + size
-
-    data[outliers, "is.outlier"] <- 1
-
-    return(data)
-
-  })
-
-  # data frame for the lines
-  linesdf <- data.frame(matrix(c(0,0,0,0), ncol = 4, nrow = 1))
-  colnames(linesdf) <- c("x1", "y1", "x2", "y2")
-
-  critical <- reactive({
+  # translate t.pval for selection into critical value / cutoff
+  critical <- eventReactive(input$generate, {
     qnorm(p = input$tpval/2, lower.tail = FALSE)
   })
-
-  ylimits <- reactive({
+  # graph should always show both the outliers and the cutoff
+  ylimits <- eventReactive(input$generate, {
     lim <- max(critical(), input$magnitude)
     c(-lim, lim)
   })
 
-  # create matrix for detected outlier lines
-  iislines <- reactive({
+  # generate new outliers whenever press "generate"
+  outliers <- eventReactive(input$generate, {
 
-    selectnames <- model()$selection$ISnames
-    selectnum <- as.numeric(stringr::str_extract(string = selectnames, pattern = "[1-9]([0-9]+)?"))
-    selectdf <- data.frame(df()[selectnum, "u", drop = FALSE])
-    selectdf$y2 <- selectdf$u
-    selectdf$u <- NULL
-    selectdf$y1 <- 0
-    selectdf$x1 <- selectnum
-    selectdf$x2 <- selectnum
+    tracker(0)
+
+    # sample random indices and order them
+    indices <- sample(1:100, size = input$share * 100, replace = FALSE)
+    indices <- indices[order(indices)]
+
+    # sample how large they should be
+    size <- sample(c(input$magnitude, -input$magnitude),
+                   size = length(indices), replace = TRUE,
+                   prob = c(1-input$negative, input$negative))
+
+    outliers <- list(indices = indices, size = size)
+    return(outliers)
 
   })
+  # update data continously
+  # but since outliers only regenerated when press button, only then updated
+  df <- reactive({
 
-  #selectnames <- model()$selection$ISnames
-  #
+    data <- original
+    if (input$generate == 0) {
 
-
-
-  output$errors <- renderPlot({
-
-    vlines <- data.frame(matrix(c(0,0,0,0), ncol = 4, nrow = 1))
-    colnames(vlines) <- c("x1", "y1", "x2", "y2")
-
-    uscatter <- ggplot(data = df()) +
-      geom_point(aes(x = id, y = u, color = is.outlier), size = 2) +
-      scale_color_manual(values = c("blue", "red"), labels = c("No", "Yes")) +
-      coord_cartesian(xlim = c(0, 100), ylim = ylimits()) +
-      ggtitle(label = "True Errors") +
-      theme(plot.title = element_text(hjust = 0.5)) +
-      xlab(label = "Index") + ylab(label = "Magnitude of Error") +
-      guides(colour = guide_legend(title = "Outlier")) +
-      geom_hline(aes(yintercept = -critical(), lty = "Lower")) +
-      geom_hline(aes(yintercept = critical(), lty = "Upper")) +
-      scale_linetype_manual(name = "Cutoff", values = c("dashed", "dashed")) +
-      geom_segment(data = vlines, aes(x = x1, y = y1, xend = x2, yend = y2),
-                   colour = "green")
-
-    return(uscatter)
+    } else {
+      ind <- outliers()$indices
+      sz <- outliers()$size
+      data[ind, "y"] <- data[ind, "y"] - data[ind, "u"] + sz
+      data[ind, "u"] <- data[ind, "u"] - data[ind, "u"] + sz
+      data[ind, "is.outlier"] <- 1
+    }
+    return(data)
   })
-
-
-
-
-    # if (input$run > 0) {
-    #   selectnames <- model()$selection$ISnames
-    #   selectnum <- as.numeric(stringr::str_extract(string = selectnames,
-    #                                                pattern = "[1-9]([0-9]+)?"))
-    #   selectdf <- data.frame(df()[selectnum, "u", drop = FALSE])
-    #   selectdf$y2 <- selectdf$u
-    #   selectdf$u <- NULL
-    #   selectdf$y1 <- 0
-    #   selectdf$x1 <- selectnum
-    #   selectdf$x2 <- selectnum
-    #   rev <- uscatter +
-    #     geom_segment(data = selectdf, aes(x = x1, y = y1, xend = x2, yend = y2),
-    #                  colour = "green") +
-    #     scale_linetype_manual("Detected", values = c("Detected" = 2))
-    #   return(rev)
-    #}
 
   # run model when press "run"
   model <- eventReactive(input$run, {
+
+    newval <- tracker() + 1
+    tracker(newval)
+
+    # give notification while running
+    id1 <- showNotification("Estimating model...", duration = NULL,
+                            closeButton = FALSE, type = "message")
+    on.exit(removeNotification(id1), add = TRUE)
+
     isatmodel <- ivisat(formula = fml, data = df(),
                         iis = ("IIS" %in% input$indicators),
                         sis = ("SIS" %in% input$indicators),
                         t.pval = input$tpval, print.searchinfo = FALSE)
+
   })
 
-  output$detected <- renderPrint(model()$selection$ISnames)
+  perform <- reactive({
+
+    det.names <- model()$selection$ISnames
+    det <- as.numeric(str_extract(string = det.names,
+                                  pattern = "[1-9]([0-9]+)?"))
+
+    # isolate outliers so that if after model has run, someone generates new
+    # outliers it does not immediately calculate potency again
+    potency <- sum(det %in% isolate(outliers()$indices)) / length(isolate(outliers()$indices))
+    gauge <- sum(!(det %in% isolate(outliers()$indices))) / length(det)
+
+    # store result in a matrix
+    out <- matrix(c(gauge, potency), nrow = 2, ncol = 1)
+    rownames(out) <- c("Gauge", "Potency")
+    return(out)
+
+  })
+
+
+  tracker <- reactiveVal(0)
+
+  # create matrix for detected outlier lines
+  iislines <- reactive({
+
+    if (input$run == 0 || tracker() == 0) {
+      selectdf <- data.frame(matrix(c(0,0,0,0), ncol = 4, nrow = 1))
+      colnames(selectdf) <- c("x1", "y1", "x2", "y2")
+    } else {
+      selectnames <- model()$selection$ISnames
+      selectnum <- as.numeric(str_extract(string = selectnames, pattern = "[1-9]([0-9]+)?"))
+      selectdf <- data.frame(isolate(df()[selectnum, "u", drop = FALSE]))
+      selectdf$y2 <- selectdf$u
+      selectdf$u <- NULL
+      selectdf$y1 <- 0
+      selectdf$x1 <- selectnum
+      selectdf$x2 <- selectnum
+    }
+    return(selectdf)
+
+  })
+
+  ### output
+  baseplot <- reactive({
+
+    if (input$generate == 0) {
+      base <- ggplot(data = df()) +
+        geom_point(aes(x = id, y = u, color = is.outlier), size = 2) +
+        scale_color_manual(values = c("blue", "red"), labels = c("No", "Yes")) +
+        coord_cartesian(xlim = c(0, 100), ylim = c(-3, 3)) +
+        ggtitle(label = "True Errors") +
+        theme(plot.title = element_text(hjust = 0.5)) +
+        xlab(label = "Index") + ylab(label = "Magnitude of Error") +
+        guides(colour = guide_legend(title = "Outlier")) +
+        geom_hline(aes(yintercept = -qnorm(p = 0.01/2, lower.tail = FALSE), lty = "Lower")) +
+        geom_hline(aes(yintercept = qnorm(p = 0.01/2, lower.tail = FALSE), lty = "Upper")) +
+        scale_linetype_manual(name = "Cutoff", values = c("dashed", "dashed"))
+    } else {
+      base <- ggplot(data = df()) +
+        geom_point(aes(x = id, y = u, color = is.outlier), size = 2) +
+        scale_color_manual(values = c("blue", "red"), labels = c("No", "Yes")) +
+        coord_cartesian(xlim = c(0, 100), ylim = ylimits()) +
+        ggtitle(label = "True Errors") +
+        theme(plot.title = element_text(hjust = 0.5)) +
+        xlab(label = "Index") + ylab(label = "Magnitude of Error") +
+        guides(colour = guide_legend(title = "Outlier")) +
+        geom_hline(aes(yintercept = -critical(), lty = "Lower")) +
+        geom_hline(aes(yintercept = critical(), lty = "Upper")) +
+        scale_linetype_manual(name = "Cutoff", values = c("dashed", "dashed")) +
+        geom_segment(data = iislines(), aes(x = x1, y = y1, xend = x2, yend = y2))
+    }
+
+    return(base)
+
+  })
+
+
+  output$errors <- renderPlot({
+
+    return(baseplot())
+
+  })
+
+  output$performance <- renderTable({
+
+    perform()
+
+  }, rownames = TRUE, colnames = FALSE)
+
+
+  found <- reactive({
+    det.names <- model()$selection$ISnames
+    det <- as.numeric(str_extract(string = det.names,
+                                  pattern = "[1-9]([0-9]+)?"))
+    return(det)
+  })
+
+  output$outliers <- renderText({
+    a <- paste(outliers()$indices, collapse = ", ")
+    b <- paste("Outliers included: ", a, sep = "")
+  })
+  output$detected <- renderText({
+    a <- paste(found(), collapse = ", ")
+    b <- paste("Outliers detected: ", a, sep = "")
+  })
 
 }
 
