@@ -20,38 +20,51 @@ original <- artificial2sls_shiny
 # user interface
 ui <- fluidPage(
 
-  fluidRow(
-    column(width = 4,
-           sliderInput(inputId = "share", label = "Share of outliers", value = 0.05,
-                       min = 0, max = 0.2, step = 0.01),
-           sliderInput(inputId = "magnitude", label = "Outlier magnitude", value = 3,
-                       min = 2, max = 6, step = 0.5)
-           ),
-    column(width = 4,
-           numericInput(inputId = "negative", label = "Probability of negative outlier",
-                        value = 0.5, min = 0, max = 1),
-           numericInput(inputId = "tpval", label = "Significance level for selection",
-                        value = 0.01, min = 0, max = 0.2)
-           ),
-    column(width = 4,
-           checkboxGroupInput(inputId = "indicators", label = "Type of indicators",
-                              choices = list("impulse indicator saturation (IIS)" = "IIS",
-                                             "step indicator saturation (SIS)" = "SIS"),
-                              selected = "IIS"),
-           actionButton(inputId = "generate", label = "Generate outliers"),
-           actionButton(inputId = "run", label = "Run")
-           )
-  ),
+  titlePanel(h1("Illustration of IIS in 2SLS Models", align = "center")),
 
+  sidebarLayout(
 
-  plotOutput("errors"),
-  textOutput("outliers"),
-  textOutput("detected"),
-  tableOutput("performance")
+    sidebarPanel(
 
+      sliderInput(inputId = "share", label = "Share of outliers", value = 0.05,
+                  min = 0, max = 0.2, step = 0.01),
+      sliderInput(inputId = "magnitude", label = "Outlier magnitude", value = 3,
+                  min = 2, max = 6, step = 0.5),
+      numericInput(inputId = "negative", label = "Probability of negative outlier",
+                   value = 0.5, min = 0, max = 1),
+      numericInput(inputId = "tpval", label = "Significance level for selection",
+                   value = 0.01, min = 0, max = 0.2),
+      checkboxGroupInput(inputId = "indicators", label = "Type of indicators",
+                         choices = list("impulse indicator saturation (IIS)" = "IIS",
+                                        "step indicator saturation (SIS)" = "SIS"),
+                         selected = "IIS"),
+      actionButton(inputId = "generate", label = "Generate outliers"),
+      actionButton(inputId = "run", label = "Run")
+
+    ),
+
+    mainPanel(
+
+      fluidRow(
+        plotOutput("errors")
+      ),
+      fluidRow(
+        column(width = 5,
+          tableOutput("performance")
+        ),
+        column(width = 7,
+          textOutput("outliers"),
+          textOutput("detected")
+        )
+      )
+
+    )
+  )
 )
 
 server <- function(input, output) {
+
+  tracker <- reactiveVal(0)
 
   # translate t.pval for selection into critical value / cutoff
   critical <- eventReactive(input$generate, {
@@ -118,24 +131,30 @@ server <- function(input, output) {
 
   perform <- reactive({
 
-    det.names <- model()$selection$ISnames
-    det <- as.numeric(str_extract(string = det.names,
-                                  pattern = "[1-9]([0-9]+)?"))
+    if (input$run == 0 || tracker() == 0) {
+      potency <- NA
+      gauge <- NA
+    } else {
+      det.names <- model()$selection$ISnames
+      det <- as.numeric(str_extract(string = det.names,
+                                    pattern = "[1-9]([0-9]+)?"))
 
-    # isolate outliers so that if after model has run, someone generates new
-    # outliers it does not immediately calculate potency again
-    potency <- sum(det %in% isolate(outliers()$indices)) / length(isolate(outliers()$indices))
-    gauge <- sum(!(det %in% isolate(outliers()$indices))) / length(det)
+      # isolate outliers so that if after model has run, someone generates new
+      # outliers it does not immediately calculate potency again
+      potency <- sum(det %in% isolate(outliers()$indices)) / length(isolate(outliers()$indices))
+      gauge <- sum(!(det %in% isolate(outliers()$indices))) / length(det)
+    }
 
     # store result in a matrix
     out <- matrix(c(gauge, potency), nrow = 2, ncol = 1)
     rownames(out) <- c("Gauge", "Potency")
+    colnames(out) <- "Performance"
     return(out)
 
   })
 
 
-  tracker <- reactiveVal(0)
+
 
   # create matrix for detected outlier lines
   iislines <- reactive({
@@ -184,7 +203,7 @@ server <- function(input, output) {
         geom_hline(aes(yintercept = -critical(), lty = "Lower")) +
         geom_hline(aes(yintercept = critical(), lty = "Upper")) +
         scale_linetype_manual(name = "Cutoff", values = c("dashed", "dashed")) +
-        geom_segment(data = iislines(), aes(x = x1, y = y1, xend = x2, yend = y2))
+        geom_segment(data = iislines(), aes(x = x1, y = y1, xend = x2, yend = y2), color = "grey")
     }
 
     return(base)
@@ -202,7 +221,8 @@ server <- function(input, output) {
 
     perform()
 
-  }, rownames = TRUE, colnames = FALSE)
+  }, rownames = TRUE, colnames = TRUE, bordered = TRUE, hover = TRUE,
+  na = "no results", spacing = "xs")
 
 
   found <- reactive({
@@ -213,12 +233,30 @@ server <- function(input, output) {
   })
 
   output$outliers <- renderText({
-    a <- paste(outliers()$indices, collapse = ", ")
-    b <- paste("Outliers included: ", a, sep = "")
+    if (input$generate == 0) {
+      paste("Outliers included: none", sep = "")
+    } else {
+      a <- paste(outliers()$indices, collapse = ", ")
+      b <- paste("Outliers included: ", a, sep = "")
+    }
   })
   output$detected <- renderText({
-    a <- paste(found(), collapse = ", ")
-    b <- paste("Outliers detected: ", a, sep = "")
+    detreactive()
+  })
+
+
+  fix <- eventReactive(input$run, {isolate(input$generate)})
+
+
+
+  detreactive <- reactive({
+    if (input$run == 0 || input$generate > fix()) {
+      b <- paste("Outliers detected: no results", sep = "")
+    } else {
+      a <- paste(found(), collapse = ", ")
+      b <- paste("Outliers detected: ", a, sep = "")
+    }
+    return(b)
   })
 
 }
