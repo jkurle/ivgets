@@ -41,5 +41,10 @@
 #'
 "artificial2sls_contaminated"
 
-
+#' Artificial data set prepared for shiny application
+#'
+#' Similar to "artificial2sls" with a few minor additions.
+#'
+#' @format A data frame with 100 observations (rows) and 17 variables (columns)
+"artificial2sls_shiny"
 

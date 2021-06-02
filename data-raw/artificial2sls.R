@@ -11,6 +11,7 @@ cor(df$z11, df$u) # quick check that instrument is approx. exogenous
 
 df[, c(14:23)] <- NULL
 df[, c(16:26)] <- NULL
+df$id <- 1:100
 artificial2sls <- df
 
 usethis::use_data(artificial2sls, overwrite = TRUE)
