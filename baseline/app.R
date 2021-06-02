@@ -20,20 +20,29 @@ original <- artificial2sls_shiny
 # user interface
 ui <- fluidPage(
 
-  sliderInput(inputId = "share", label = "Share of outliers", value = 0.05,
-              min = 0, max = 0.2, step = 0.01),
-  sliderInput(inputId = "magnitude", label = "Outlier magnitude", value = 3,
-              min = 2, max = 6, step = 0.5),
-  numericInput(inputId = "negative", label = "Probability of negative outlier",
-              value = 0.5, min = 0, max = 1),
-  numericInput(inputId = "tpval", label = "Significance level for selection",
-              value = 0.01, min = 0, max = 0.2),
-  checkboxGroupInput(inputId = "indicators", label = "Type of indicators",
-                     choices = list("impulse indicator saturation (IIS)" = "IIS",
-                                    "step indicator saturation (SIS)" = "SIS"),
-                     selected = "IIS"),
-  actionButton(inputId = "generate", label = "Generate outliers"),
-  actionButton(inputId = "run", label = "Run"),
+  fluidRow(
+    column(width = 4,
+           sliderInput(inputId = "share", label = "Share of outliers", value = 0.05,
+                       min = 0, max = 0.2, step = 0.01),
+           sliderInput(inputId = "magnitude", label = "Outlier magnitude", value = 3,
+                       min = 2, max = 6, step = 0.5)
+           ),
+    column(width = 4,
+           numericInput(inputId = "negative", label = "Probability of negative outlier",
+                        value = 0.5, min = 0, max = 1),
+           numericInput(inputId = "tpval", label = "Significance level for selection",
+                        value = 0.01, min = 0, max = 0.2)
+           ),
+    column(width = 4,
+           checkboxGroupInput(inputId = "indicators", label = "Type of indicators",
+                              choices = list("impulse indicator saturation (IIS)" = "IIS",
+                                             "step indicator saturation (SIS)" = "SIS"),
+                              selected = "IIS"),
+           actionButton(inputId = "generate", label = "Generate outliers"),
+           actionButton(inputId = "run", label = "Run")
+           )
+  ),
+
 
   plotOutput("errors"),
   textOutput("outliers"),
