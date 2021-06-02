@@ -20,7 +20,7 @@ original <- artificial2sls_shiny
 # user interface
 ui <- fluidPage(
 
-  titlePanel(h1("Illustration of IIS in 2SLS Models", align = "center")),
+  titlePanel("Illustration of IIS in 2SLS Models"),
 
   sidebarLayout(
 
