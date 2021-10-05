@@ -84,23 +84,43 @@ ivisat <- function(
 
   # do model selection
   # always specify mc = FALSE because intercept will have been created if needed
+  # if want to test, use userdia; otherwise don't
+  if (test == TRUE) {
+    a <- gets::isat(y = setup$y, mc = FALSE, ar = NULL, ewma = NULL,
+                    mxreg = setup$x, iis = iis, sis = sis, tis = tis, uis = uis,
+                    blocks = blocks, ratio.threshold = ratio.threshold,
+                    max.block.size = max.block.size, t.pval = t.pval,
+                    wald.pval = wald.pval, vcov.type = "ordinary",
+                    do.pet = do.pet, ar.LjungB = ar.LjungB,
+                    arch.LjungB = arch.LjungB,
+                    normality.JarqueB = normality.JarqueB,
+                    info.method = info.method, user.diagnostics = userdia,
+                    user.estimator = userest, gof.function = NULL,
+                    gof.method = "min", include.gum = NULL,
+                    include.1cut = include.1cut, include.empty = include.empty,
+                    max.paths = max.paths, parallel.options = parallel.options,
+                    turbo = turbo, tol = tol, LAPACK = FALSE,
+                    max.regs = max.regs, print.searchinfo = print.searchinfo,
+                    plot = plot, alarm = alarm)
+  } else {
+    a <- gets::isat(y = setup$y, mc = FALSE, ar = NULL, ewma = NULL,
+                    mxreg = setup$x, iis = iis, sis = sis, tis = tis, uis = uis,
+                    blocks = blocks, ratio.threshold = ratio.threshold,
+                    max.block.size = max.block.size, t.pval = t.pval,
+                    wald.pval = wald.pval, vcov.type = "ordinary",
+                    do.pet = do.pet, ar.LjungB = ar.LjungB,
+                    arch.LjungB = arch.LjungB,
+                    normality.JarqueB = normality.JarqueB,
+                    info.method = info.method, user.diagnostics = NULL,
+                    user.estimator = userest, gof.function = NULL,
+                    gof.method = "min", include.gum = NULL,
+                    include.1cut = include.1cut, include.empty = include.empty,
+                    max.paths = max.paths, parallel.options = parallel.options,
+                    turbo = turbo, tol = tol, LAPACK = FALSE,
+                    max.regs = max.regs, print.searchinfo = print.searchinfo,
+                    plot = plot, alarm = alarm)
+  }
 
-  a <- gets::isat(y = setup$y, mc = FALSE, ar = NULL, ewma = NULL,
-                  mxreg = setup$x, iis = iis, sis = sis, tis = tis, uis = uis,
-                  blocks = blocks, ratio.threshold = ratio.threshold,
-                  max.block.size = max.block.size, t.pval = t.pval,
-                  wald.pval = wald.pval, vcov.type = "ordinary",
-                  do.pet = do.pet, ar.LjungB = ar.LjungB,
-                  arch.LjungB = arch.LjungB,
-                  normality.JarqueB = normality.JarqueB,
-                  info.method = info.method, user.diagnostics = userdia,
-                  user.estimator = userest, gof.function = NULL,
-                  gof.method = "min", include.gum = NULL,
-                  include.1cut = include.1cut, include.empty = include.empty,
-                  max.paths = max.paths, parallel.options = parallel.options,
-                  turbo = turbo, tol = tol, LAPACK = FALSE, max.regs = max.regs,
-                  print.searchinfo = print.searchinfo, plot = plot,
-                  alarm = alarm)
 
   if (a$no.of.estimations == a$no.of.getsFun.calls) {
     warning("No selection was undertaken. Probable reason: https://github.com/gsucarrat/gets/issues/39")
