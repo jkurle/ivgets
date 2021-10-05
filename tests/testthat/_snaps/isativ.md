@@ -22,9 +22,9 @@
     
     Diagnostics and fit:
     
-                      Statistic df p-value
-    Ljung-Box AR(1)     1.77243  1  0.1831
-    Ljung-Box ARCH(1)   0.95742  1  0.3278
+                       Chi-sq df p-value
+    Ljung-Box AR(1)   1.77243  1  0.1831
+    Ljung-Box ARCH(1) 0.95742  1  0.3278
                               
     SE of regression   0.83540
     R-squared          0.87338
@@ -65,9 +65,9 @@
     
     Diagnostics and fit:
     
-                      Statistic df p-value
-    Ljung-Box AR(1)    0.087717  1  0.7671
-    Ljung-Box ARCH(1)  1.104955  1  0.2932
+                        Chi-sq df p-value
+    Ljung-Box AR(1)   0.087717  1  0.7671
+    Ljung-Box ARCH(1) 1.104955  1  0.2932
                               
     SE of regression   0.94471
     R-squared          0.83088
@@ -115,9 +115,9 @@
     
     Diagnostics and fit:
     
-                      Statistic df p-value
-    Ljung-Box AR(1)     0.21839  1  0.6403
-    Ljung-Box ARCH(1)   0.31993  1  0.5716
+                       Chi-sq df p-value
+    Ljung-Box AR(1)   0.21839  1  0.6403
+    Ljung-Box ARCH(1) 0.31993  1  0.5716
                               
     SE of regression   0.76702
     R-squared          0.90512
@@ -160,9 +160,9 @@
     
     Diagnostics and fit:
     
-                      Statistic df p-value
-    Ljung-Box AR(1)     1.77243  1  0.1831
-    Ljung-Box ARCH(1)   0.95742  1  0.3278
+                       Chi-sq df p-value
+    Ljung-Box AR(1)   1.77243  1  0.1831
+    Ljung-Box ARCH(1) 0.95742  1  0.3278
                               
     SE of regression   0.83540
     R-squared          0.87338
@@ -205,9 +205,9 @@
     
     Diagnostics and fit:
     
-                      Statistic df p-value
-    Ljung-Box AR(1)     1.77243  1  0.1831
-    Ljung-Box ARCH(1)   0.95742  1  0.3278
+                       Chi-sq df p-value
+    Ljung-Box AR(1)   1.77243  1  0.1831
+    Ljung-Box ARCH(1) 0.95742  1  0.3278
                               
     SE of regression   0.83540
     R-squared          0.87338
