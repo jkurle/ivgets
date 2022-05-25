@@ -3,6 +3,7 @@
 S3method(gets,ivreg)
 S3method(isat,ivreg)
 export(extract_variables)
+export(factory_indicators)
 export(ivDiag)
 export(ivgets)
 export(ivisat)
