@@ -3,14 +3,25 @@
 \docType{data}
 \name{artificial2sls_shiny}
 \alias{artificial2sls_shiny}
-\title{Artificial data set prepared for shiny application}
+\title{Artificial data set without outliers prepared for shiny application.}
 \format{
-A data frame with 100 observations (rows) and 17 variables (columns)
+A data frame with 100 observations (rows) and 17 variables (columns):
+\describe{
+\item{y}{dependent variable}
+\item{x1}{intercept}
+\item{x2}{relevant exogenous regressor}
+\item{x3 - x10}{irrelevant exogenous regressors}
+\item{x11}{relevant endogenous regressor}
+\item{u}{structural error (in practice unobserved)}
+\item{z11 - z12}{excluded instruments}
+\item{id}{unique observation identifier}
+\item{is.outlier}{factor variable whether the observation is an outlier (\code{1}) or not (\code{0})}
+}
 }
 \usage{
 artificial2sls_shiny
 }
 \description{
-Similar to "artificial2sls" with a few minor additions.
+Artificial data set without outliers prepared for shiny application.
 }
 \keyword{datasets}
