@@ -14,6 +14,9 @@ ivregFun(y, x, z, formula, tests)
 \item{z}{A numeric vector or matrix.}
 
 \item{formula}{A formula in the format \code{y ~ x1 + x2 | z1 + z2}.}
+
+\item{tests}{A logical value whether to calculate the
+\code{\link[ivreg:ivregMethods]{ivreg::summary.ivreg()}} diagnostics.}
 }
 \value{
 A list with entries needed for model selection via \code{\link[gets:getsFun]{gets::getsFun()}}

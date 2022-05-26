@@ -233,6 +233,8 @@ new_formula <- function(formula, data, keep_exog) {
 #'
 #' The created function takes a name of an indicator and the original uis
 #' argument that was used in indicator saturation and returns the indicator.
+#'
+#' @export
 
 factory_indicators <- function(n) {
 

@@ -1,4 +1,4 @@
-## code to prepare `artificial2sls_contaminated` dataset goes here
+# code to prepare `artificial2sls_contaminated` dataset
 
 load(file = "./data/artificial2sls.rda")
 df <- artificial2sls

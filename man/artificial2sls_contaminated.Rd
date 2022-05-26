@@ -5,7 +5,7 @@
 \alias{artificial2sls_contaminated}
 \title{Artificial data set with outliers for illustration.}
 \format{
-A data frame with 100 observations (rows) and 15 variables (columns):
+A data frame with 100 observations (rows) and 16 variables (columns):
 \describe{
 \item{y}{dependent variable}
 \item{x1}{intercept}
@@ -14,6 +14,7 @@ A data frame with 100 observations (rows) and 15 variables (columns):
 \item{x11}{relevant endogenous regressor}
 \item{u}{structural error (in practice unobserved)}
 \item{z11 - z12}{excluded instruments}
+\item{id}{unique observation identifier}
 }
 }
 \usage{

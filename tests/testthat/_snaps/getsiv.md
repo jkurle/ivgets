@@ -3,17 +3,18 @@
     $selection
     $selection$call
     a <- gets::getsFun(y = setup$y, x = setup$x, untransformed.residuals = NULL,
-                         user.estimator = userest, gum.result = gum.result,
-                         t.pval = t.pval, wald.pval = wald.pval, do.pet = do.pet,
-                         ar.LjungB = ar.LjungB, arch.LjungB = arch.LjungB,
-                         normality.JarqueB = normality.JarqueB,
-                         user.diagnostics = userdia,
-                         gof.function = list(name = "infocrit"), gof.method = "min",
-                         keep = setup$keep, include.gum = include.gum,
-                         include.1cut = include.1cut, include.empty = include.empty,
-                         max.paths = max.paths, turbo = turbo, tol = tol,
-                         LAPACK = FALSE, max.regs = max.regs,
-                         print.searchinfo = print.searchinfo, alarm = alarm)
+                           user.estimator = userest, gum.result = gum.result,
+                           t.pval = t.pval, wald.pval = wald.pval, do.pet = do.pet,
+                           ar.LjungB = ar.LjungB, arch.LjungB = arch.LjungB,
+                           normality.JarqueB = normality.JarqueB,
+                           user.diagnostics = NULL,
+                           gof.function = list(name = "infocrit"),
+                           gof.method = "min", keep = setup$keep,
+                           include.gum = include.gum, include.1cut = include.1cut,
+                           include.empty = include.empty, max.paths = max.paths,
+                           turbo = turbo, tol = tol, LAPACK = FALSE,
+                           max.regs = max.regs, print.searchinfo = print.searchinfo,
+                           alarm = alarm)
     
     $selection$no.of.estimations
     [1] 17
@@ -70,17 +71,18 @@
     $selection
     $selection$call
     a <- gets::getsFun(y = setup$y, x = setup$x, untransformed.residuals = NULL,
-                         user.estimator = userest, gum.result = gum.result,
-                         t.pval = t.pval, wald.pval = wald.pval, do.pet = do.pet,
-                         ar.LjungB = ar.LjungB, arch.LjungB = arch.LjungB,
-                         normality.JarqueB = normality.JarqueB,
-                         user.diagnostics = userdia,
-                         gof.function = list(name = "infocrit"), gof.method = "min",
-                         keep = setup$keep, include.gum = include.gum,
-                         include.1cut = include.1cut, include.empty = include.empty,
-                         max.paths = max.paths, turbo = turbo, tol = tol,
-                         LAPACK = FALSE, max.regs = max.regs,
-                         print.searchinfo = print.searchinfo, alarm = alarm)
+                           user.estimator = userest, gum.result = gum.result,
+                           t.pval = t.pval, wald.pval = wald.pval, do.pet = do.pet,
+                           ar.LjungB = ar.LjungB, arch.LjungB = arch.LjungB,
+                           normality.JarqueB = normality.JarqueB,
+                           user.diagnostics = NULL,
+                           gof.function = list(name = "infocrit"),
+                           gof.method = "min", keep = setup$keep,
+                           include.gum = include.gum, include.1cut = include.1cut,
+                           include.empty = include.empty, max.paths = max.paths,
+                           turbo = turbo, tol = tol, LAPACK = FALSE,
+                           max.regs = max.regs, print.searchinfo = print.searchinfo,
+                           alarm = alarm)
     
     $selection$no.of.estimations
     [1] 10
@@ -134,17 +136,18 @@
     $selection
     $selection$call
     a <- gets::getsFun(y = setup$y, x = setup$x, untransformed.residuals = NULL,
-                         user.estimator = userest, gum.result = gum.result,
-                         t.pval = t.pval, wald.pval = wald.pval, do.pet = do.pet,
-                         ar.LjungB = ar.LjungB, arch.LjungB = arch.LjungB,
-                         normality.JarqueB = normality.JarqueB,
-                         user.diagnostics = userdia,
-                         gof.function = list(name = "infocrit"), gof.method = "min",
-                         keep = setup$keep, include.gum = include.gum,
-                         include.1cut = include.1cut, include.empty = include.empty,
-                         max.paths = max.paths, turbo = turbo, tol = tol,
-                         LAPACK = FALSE, max.regs = max.regs,
-                         print.searchinfo = print.searchinfo, alarm = alarm)
+                           user.estimator = userest, gum.result = gum.result,
+                           t.pval = t.pval, wald.pval = wald.pval, do.pet = do.pet,
+                           ar.LjungB = ar.LjungB, arch.LjungB = arch.LjungB,
+                           normality.JarqueB = normality.JarqueB,
+                           user.diagnostics = userdia,
+                           gof.function = list(name = "infocrit"),
+                           gof.method = "min", keep = setup$keep,
+                           include.gum = include.gum, include.1cut = include.1cut,
+                           include.empty = include.empty, max.paths = max.paths,
+                           turbo = turbo, tol = tol, LAPACK = FALSE,
+                           max.regs = max.regs, print.searchinfo = print.searchinfo,
+                           alarm = alarm)
     
     $selection$no.of.estimations
     [1] 17
@@ -201,17 +204,18 @@
     $selection
     $selection$call
     a <- gets::getsFun(y = setup$y, x = setup$x, untransformed.residuals = NULL,
-                         user.estimator = userest, gum.result = gum.result,
-                         t.pval = t.pval, wald.pval = wald.pval, do.pet = do.pet,
-                         ar.LjungB = ar.LjungB, arch.LjungB = arch.LjungB,
-                         normality.JarqueB = normality.JarqueB,
-                         user.diagnostics = userdia,
-                         gof.function = list(name = "infocrit"), gof.method = "min",
-                         keep = setup$keep, include.gum = include.gum,
-                         include.1cut = include.1cut, include.empty = include.empty,
-                         max.paths = max.paths, turbo = turbo, tol = tol,
-                         LAPACK = FALSE, max.regs = max.regs,
-                         print.searchinfo = print.searchinfo, alarm = alarm)
+                           user.estimator = userest, gum.result = gum.result,
+                           t.pval = t.pval, wald.pval = wald.pval, do.pet = do.pet,
+                           ar.LjungB = ar.LjungB, arch.LjungB = arch.LjungB,
+                           normality.JarqueB = normality.JarqueB,
+                           user.diagnostics = userdia,
+                           gof.function = list(name = "infocrit"),
+                           gof.method = "min", keep = setup$keep,
+                           include.gum = include.gum, include.1cut = include.1cut,
+                           include.empty = include.empty, max.paths = max.paths,
+                           turbo = turbo, tol = tol, LAPACK = FALSE,
+                           max.regs = max.regs, print.searchinfo = print.searchinfo,
+                           alarm = alarm)
     
     $selection$no.of.estimations
     [1] 17
@@ -268,17 +272,18 @@
     $selection
     $selection$call
     a <- gets::getsFun(y = setup$y, x = setup$x, untransformed.residuals = NULL,
-                         user.estimator = userest, gum.result = gum.result,
-                         t.pval = t.pval, wald.pval = wald.pval, do.pet = do.pet,
-                         ar.LjungB = ar.LjungB, arch.LjungB = arch.LjungB,
-                         normality.JarqueB = normality.JarqueB,
-                         user.diagnostics = userdia,
-                         gof.function = list(name = "infocrit"), gof.method = "min",
-                         keep = setup$keep, include.gum = include.gum,
-                         include.1cut = include.1cut, include.empty = include.empty,
-                         max.paths = max.paths, turbo = turbo, tol = tol,
-                         LAPACK = FALSE, max.regs = max.regs,
-                         print.searchinfo = print.searchinfo, alarm = alarm)
+                           user.estimator = userest, gum.result = gum.result,
+                           t.pval = t.pval, wald.pval = wald.pval, do.pet = do.pet,
+                           ar.LjungB = ar.LjungB, arch.LjungB = arch.LjungB,
+                           normality.JarqueB = normality.JarqueB,
+                           user.diagnostics = NULL,
+                           gof.function = list(name = "infocrit"),
+                           gof.method = "min", keep = setup$keep,
+                           include.gum = include.gum, include.1cut = include.1cut,
+                           include.empty = include.empty, max.paths = max.paths,
+                           turbo = turbo, tol = tol, LAPACK = FALSE,
+                           max.regs = max.regs, print.searchinfo = print.searchinfo,
+                           alarm = alarm)
     
     $selection$no.of.estimations
     [1] 14
@@ -339,17 +344,18 @@
     $selection
     $selection$call
     a <- gets::getsFun(y = setup$y, x = setup$x, untransformed.residuals = NULL,
-                         user.estimator = userest, gum.result = gum.result,
-                         t.pval = t.pval, wald.pval = wald.pval, do.pet = do.pet,
-                         ar.LjungB = ar.LjungB, arch.LjungB = arch.LjungB,
-                         normality.JarqueB = normality.JarqueB,
-                         user.diagnostics = userdia,
-                         gof.function = list(name = "infocrit"), gof.method = "min",
-                         keep = setup$keep, include.gum = include.gum,
-                         include.1cut = include.1cut, include.empty = include.empty,
-                         max.paths = max.paths, turbo = turbo, tol = tol,
-                         LAPACK = FALSE, max.regs = max.regs,
-                         print.searchinfo = print.searchinfo, alarm = alarm)
+                           user.estimator = userest, gum.result = gum.result,
+                           t.pval = t.pval, wald.pval = wald.pval, do.pet = do.pet,
+                           ar.LjungB = ar.LjungB, arch.LjungB = arch.LjungB,
+                           normality.JarqueB = normality.JarqueB,
+                           user.diagnostics = NULL,
+                           gof.function = list(name = "infocrit"),
+                           gof.method = "min", keep = setup$keep,
+                           include.gum = include.gum, include.1cut = include.1cut,
+                           include.empty = include.empty, max.paths = max.paths,
+                           turbo = turbo, tol = tol, LAPACK = FALSE,
+                           max.regs = max.regs, print.searchinfo = print.searchinfo,
+                           alarm = alarm)
     
     $selection$no.of.estimations
     [1] 17
