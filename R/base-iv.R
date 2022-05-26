@@ -8,6 +8,8 @@
 #' @param x A matrix or \code{NULL}.
 #' @param z A numeric vector or matrix.
 #' @param formula A formula in the format \code{y ~ x1 + x2 | z1 + z2}.
+#' @param tests A logical value whether to calculate the
+#'   [ivreg::summary.ivreg()] diagnostics.
 #'
 #' @return A list with entries needed for model selection via [gets::getsFun()]
 #'   or [gets::isat()].
