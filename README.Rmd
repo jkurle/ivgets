@@ -16,6 +16,7 @@ knitr::opts_chunk$set(
 # ivgets
 
 <!-- badges: start -->
+[![Codecov test coverage](https://codecov.io/gh/jkurle/ivgets/branch/master/graph/badge.svg)](https://app.codecov.io/gh/jkurle/ivgets?branch=master)
 <!-- badges: end -->
 
 The _ivgets_ package provides general-to-specific modeling functionality for
