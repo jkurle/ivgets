@@ -27,4 +27,4 @@ BugReports: https://github.com/jkurle/ivgets/issues
 Imports: 
     stringr
 VignetteBuilder: knitr
-Remotes: gsucarrat/gets/gets
+Remotes: gsucarrat/gets/gets@fix
