@@ -42,17 +42,20 @@ ivregFun <- function(y, x, z, formula, tests) {
 
   result <- list()
   result$n <- length(y)
-  if (is.null(x) || NCOL(x) == 0) {
+  if (is.null(x) | NCOL(x) == 0) {
     result$k <- 0
   } else {
 
-    if ("Intercept" %in% colnames(x)) {
-      int.index <- which("Intercept" == colnames(x))
-      df <- data.frame(cbind(y, x, z))
-      colnames(df)[int.index + 1] <- "Intercept"
-    } else {
-      df <- data.frame(cbind(y, x, z))
-    }
+    # # not sure whether this is needed
+    # if ("(Intercept)" %in% colnames(x)) {
+    #   int.index <- which("(Intercept)" == colnames(x))
+    #   df <- data.frame(cbind(y, x, z))
+    #   colnames(df)[int.index + 1] <- "(Intercept)"
+    # } else {
+    #   df <- data.frame(cbind(y, x, z))
+    # }
+
+    df <- data.frame(cbind(y, x, z))
 
     # create the formula for estimation using the available variables
     reg <- colnames(x)
