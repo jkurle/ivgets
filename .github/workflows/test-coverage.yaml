@@ -23,7 +23,8 @@ jobs:
 
       - uses: r-lib/actions/setup-r-dependencies@v1
         with:
-          extra-packages: covr, remotes::install_github("gsucarrat/gets@fix/gets")
+          extra-packages: |
+            covr
 
       - name: Test coverage
         run: covr::codecov()
