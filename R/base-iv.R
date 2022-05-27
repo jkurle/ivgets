@@ -20,6 +20,8 @@
 #'   <https://journal.r-project.org/archive/2021/RJ-2021-024/index.html>
 #'
 #' @export
+#' @importFrom stats as.formula coef residuals var vcov
+#' @importFrom ivreg ivreg
 
 ivregFun <- function(y, x, z, formula, tests) {
 
@@ -75,7 +77,7 @@ ivregFun <- function(y, x, z, formula, tests) {
   # call ivreg::ivreg() if k > 0
   if (result$k > 0) { # have regressors
 
-    tmp <- ivreg::ivreg(formula = as.formula(new_fml), data = df)
+    tmp <- ivreg(formula = as.formula(new_fml), data = df)
 
     result$coefficients <- coef(tmp) # only the beta 2nd stage coeff
     result$vcov <- vcov(tmp)

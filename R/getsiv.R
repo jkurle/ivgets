@@ -1,6 +1,8 @@
 #' General-to-specific modelling for 2SLS models
 #'
 #' @inheritParams gets::getsFun
+#' @param formula A formula in the format \code{y ~ x1 + x2 | z1 + z2}.
+#' @param data A data frame with all necessary variables y, x, and z.
 #' @param keep_exog A numeric vector of indices or a character vector of names
 #' corresponding to the exogenous regressors in the \code{data} that should not
 #' be selected over. Default \code{NULL} means that selection is over all

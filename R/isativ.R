@@ -2,6 +2,8 @@
 #'
 #' @inheritParams gets::isat
 #' @inheritParams ivgets
+#' @param formula A formula in the format \code{y ~ x1 + x2 | z1 + z2}.
+#' @param data A data frame with all necessary variables y, x, and z.
 #' @param uis a matrix of regressors, or a list of matrices. If a list, the
 #'   matrices must have named columns that should not overlap with column names
 #'   of any other matrices in the list.

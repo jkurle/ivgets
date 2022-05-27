@@ -29,6 +29,10 @@ ivgets(
 )
 }
 \arguments{
+\item{formula}{A formula in the format \code{y ~ x1 + x2 | z1 + z2}.}
+
+\item{data}{A data frame with all necessary variables y, x, and z.}
+
 \item{gum.result}{a \code{list} with the estimation results of the General Unrestricted Model (GUM), or \code{NULL} (default). If the estimation results of the GUM are already available, then re-estimation of the GUM is skipped if the estimation results are provided via this argument}
 
 \item{t.pval}{\code{numeric} value between 0 and 1. The significance level used for the two-sided regressor significance t-tests }

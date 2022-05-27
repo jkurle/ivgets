@@ -64,6 +64,9 @@ test_that("ivregFun() works correctly", {
   expect_identical(class(out$std.residuals), "numeric")
   expect_length(out$std.residuals, 10L)
 
+  # must be able to handle empty models
+  out <- ivregFun(y = y, x = matrix(nrow = 0, ncol = 0), z = z, formula = fml, test = TRUE)
+
   # must be able to handle models where x deviates from "formula x"
   # e.g. if path search and have deleted some regressors
   x <- x[, -1, drop = FALSE] # suppose cons has been deleted

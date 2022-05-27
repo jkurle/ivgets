@@ -36,6 +36,10 @@ ivisat(
 )
 }
 \arguments{
+\item{formula}{A formula in the format \code{y ~ x1 + x2 | z1 + z2}.}
+
+\item{data}{A data frame with all necessary variables y, x, and z.}
+
 \item{iis}{logical. If \code{TRUE}, impulse indicator saturation is performed.}
 
 \item{sis}{logical. If \code{TRUE}, step indicator saturation is performed.}
