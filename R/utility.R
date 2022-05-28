@@ -165,9 +165,10 @@ new_formula <- function(formula, data, keep_exog) {
     # "Intercept". If had intercept present before then the other one is
     # dropped.
     dropnames <- setdiff(xnames, colnames(xnew))
-    if (length(dropnames) > 1) { # rank deficient by more than 1 (should not happen)
+    # rank deficient by more than 1 (should not happen)
+    if (length(dropnames) > 1) { # nocov start
       stop("Original structural equation had multicollinearity issues. Please re-specify the initial model such that no multicollinearity arises.")
-    }
+    } # nocov end
     # dropnames can only have dropped a regressor that was perfectly collinear
     # with the intercept; so can delete that regressor from the exogenous regr.
     # but add the regressor Intercept
@@ -191,16 +192,19 @@ new_formula <- function(formula, data, keep_exog) {
   keep_names <- keep
   keep <- which(colnames(x) %in% keep_names)
   # in practice, keep should never be empty unless we are really in OLS case
+  # nocov start
   if (length(keep) == 0) { keep <- NULL }
+  # nocov end
 
   # save number of the types of regressors
   dx1 <- length(x1_base)
   dx2 <- length(x2_base)
   dz1 <- length(z1_base)
   dz2 <- length(z2_base)
-  if (!identical(dx1, dz1)) { # sanity check
+  # sanity check
+  if (!identical(dx1, dz1)) { # nocov start
     stop("Something went wrong. dx1 should be equal to dz1.")
-  }
+  } # nocov end
 
   # create new baseline formula
   baseline_x <- paste(c("-1", x1_base, x2_base), sep = "", collapse = "+")

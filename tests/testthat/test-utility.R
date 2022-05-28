@@ -129,6 +129,10 @@ test_that("new_formula() throws correct error", {
   f10 <- y ~ cons + x1 + x2 | cons + x1 + z2
   expect_warning(expect_error(new_formula(f10, df, keep_exog = "cons")))
 
+  # keep_names with name not in colnames of data
+  expect_error(new_formula(y ~ x1+x2|x1+z2, df, keep_exog = "nonexist"),
+               "Argument 'keep_exog' specifies names that cannot be found in the data frame")
+
 })
 
 test_that("new_formula() works correctly", {
@@ -463,6 +467,12 @@ test_that("factory_indicators() works correctly", {
     ind <- c1(name = names[i], uis = uislist)
     expect_identical(ind, base[, i, drop = FALSE])
   }
+
+  # test uis with unnamed matrix
+  f <- factory_indicators(5)
+  m <- diag(5)
+  expect_identical(f(name = "uisxreg1", uis = m), diag(5)[, 1, drop = FALSE])
+  expect_identical(f(name = "uisxreg4", uis = m), diag(5)[, 4, drop = FALSE])
 
   # check for errors within the creator function
   expect_error(c1(name = "iis10", uis = NULL), "Specified iis, sis, or tis of length larger than sample size")
