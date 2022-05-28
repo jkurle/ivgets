@@ -12,7 +12,7 @@ test_that("ivregFun() works correctly", {
   z <- as.matrix(df[, c("z2"), drop = FALSE])
   fml <- y ~ -1+cons+x1+x2 | -1+cons+x1+z2
 
-  out <- ivregFun(y = y, x = x, z = z, formula = fml, test = TRUE)
+  out <- ivregFun(y = y, x = x, z = z, formula = fml, tests = TRUE)
 
   # basic tests of type, class, length, names
   expect_type(out, "list")
@@ -43,7 +43,7 @@ test_that("ivregFun() works correctly", {
   expect_snapshot_output(out)
 
   # must be able to handle empty models
-  out <- ivregFun(y = y, x = NULL, z = z, formula = fml, test = TRUE)
+  out <- ivregFun(y = y, x = NULL, z = z, formula = fml, tests = TRUE)
   expect_type(out, "list")
   expect_length(out, 9)
   expect_named(out, c("n", "k", "df", "coefficients", "vcov", "logl", "diag",
@@ -65,12 +65,12 @@ test_that("ivregFun() works correctly", {
   expect_length(out$std.residuals, 10L)
 
   # must be able to handle empty models
-  out <- ivregFun(y = y, x = matrix(nrow = 0, ncol = 0), z = z, formula = fml, test = TRUE)
+  out <- ivregFun(y = y, x = matrix(nrow = 0, ncol = 0), z = z, formula = fml, tests = TRUE)
 
   # must be able to handle models where x deviates from "formula x"
   # e.g. if path search and have deleted some regressors
   x <- x[, -1, drop = FALSE] # suppose cons has been deleted
-  out <- ivregFun(y = y, x = x, z = z, formula = fml, test = TRUE)
+  out <- ivregFun(y = y, x = x, z = z, formula = fml, tests = TRUE)
   expect_type(out, "list")
   expect_length(out, 9)
   expect_named(out, c("n", "k", "df", "coefficients", "vcov", "logl", "diag",
@@ -100,7 +100,7 @@ test_that("ivregFun() works correctly", {
 
   # now suppose that x1 has been deleted
   x <- as.matrix(df[, c("cons", "x2"), drop = FALSE])
-  out <- ivregFun(y = y, x = x, z = z, formula = fml, test = TRUE)
+  out <- ivregFun(y = y, x = x, z = z, formula = fml, tests = TRUE)
   expect_type(out, "list")
   expect_length(out, 9)
   expect_named(out, c("n", "k", "df", "coefficients", "vcov", "logl", "diag",
@@ -133,7 +133,7 @@ test_that("ivregFun() works correctly", {
   iis3 <- diag(10)[, 3, drop = FALSE]
   colnames(iis3) <- "iis3"
   x <- cbind(iis3, x)
-  out <- ivregFun(y = y, x = x, z = z, formula = fml, test = TRUE)
+  out <- ivregFun(y = y, x = x, z = z, formula = fml, tests = TRUE)
 
   expect_type(out, "list")
   expect_length(out, 9)
@@ -165,7 +165,7 @@ test_that("ivregFun() works correctly", {
   # check that position of where iis is added does not matter
   x <- as.matrix(df[, c("cons", "x1", "x2"), drop = FALSE])
   x <- cbind(x[, 1, drop = FALSE], iis3, x[, -1, drop = FALSE]) # is now second
-  out2 <- ivregFun(y = y, x = x, z = z, formula = fml, test = TRUE)
+  out2 <- ivregFun(y = y, x = x, z = z, formula = fml, tests = TRUE)
 
   expect_type(out2, "list")
   expect_length(out2, 9)
@@ -203,7 +203,7 @@ test_that("ivregFun() works correctly", {
   sis8 <- as.matrix(c(0,0,0,0,0,0,0,1,1,1), nrow = 10, ncol = 1)
   colnames(sis8) <- "sis8"
   x <- cbind(iis3, sis8, x)
-  out <- ivregFun(y = y, x = x, z = z, formula = fml, test = TRUE)
+  out <- ivregFun(y = y, x = x, z = z, formula = fml, tests = TRUE)
 
   expect_type(out, "list")
   expect_length(out, 9)
@@ -249,7 +249,7 @@ test_that("ivDiag() works correctly", {
   x <- as.matrix(df[, c("cons", "x1", "x2"), drop = FALSE])
   z <- as.matrix(df[, c("z2", "z3"), drop = FALSE])
   fml <- y ~ -1+cons+x1+x2 | -1+cons+x1+z2+z3
-  out <- ivregFun(y = y, x = x, z = z, formula = fml, test = TRUE)
+  out <- ivregFun(y = y, x = x, z = z, formula = fml, tests = TRUE)
 
   # no misspecification test specified
   expect_identical(ivDiag(x = out, weak = FALSE, overid = FALSE), NULL)
@@ -293,7 +293,7 @@ test_that("ivDiag() works correctly", {
   df$x3 <- stats::rnorm(10) # endogenous regressor
   x <- as.matrix(df[, c("cons", "x1", "x2", "x3"), drop = FALSE])
   fml <- y ~ -1+cons+x1+x2+x3 | -1+cons+x1+z2+z3
-  out <- ivregFun(y = y, x = x, z = z, formula = fml, test = TRUE)
+  out <- ivregFun(y = y, x = x, z = z, formula = fml, tests = TRUE)
   d <- ivDiag(x = out, weak = TRUE, overid = FALSE) # now have two tests weak
   expect_identical(class(d), c("matrix", "array"))
   expect_identical(dim(d), c(2L, 3L))
