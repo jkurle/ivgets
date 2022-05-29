@@ -171,10 +171,12 @@ gets.ivreg <- function(
   # new arguments
   keep_exog = NULL, overid = NULL, weak = NULL) {
 
-  if (!identical(class(ivreg_object), "ivreg")) {
+  # R's method dispatch will already return error if no method defined for that class
+  # so check is redundant, keep if people call explicitly gets.ivreg()
+  if (!identical(class(ivreg_object), "ivreg")) { # nocov start
     stop("Argument 'ivreg_object' must be an ivreg object from the package
          ivreg.")
-  }
+  } # nocov end
   if (is.null(ivreg_object$model)) {
     stop("Please specify 'model = TRUE' in the original function call so the
          data is part of the model object.")
