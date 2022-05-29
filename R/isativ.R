@@ -199,15 +199,17 @@ isat.ivreg <- function(
   # new arguments
   overid = NULL, weak = NULL) {
 
-  if (!identical(class(ivreg_object), "ivreg")) {
+  # R's method dispatch will already return error if no method defined for that class
+  # so check is redundant, keep if people call explicitly isat.ivreg()
+  if (!identical(class(ivreg_object), "ivreg")) { # nocov start
     stop("Argument 'ivreg_object' must be an ivreg object from the package
          ivreg.")
-  }
+  } # nocov end
   if (is.null(ivreg_object$model)) {
     stop("Please specify 'model = TRUE' in the original function call so the
          data is part of the model object.")
   }
-  if (!is.null(ivreg_object$weigths)) {
+  if (!is.null(ivreg_object$weights)) {
     stop("GETS modelling currently does not support weights.")
   }
 
