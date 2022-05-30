@@ -6,15 +6,24 @@
 \title{Artificial data set for illustration.}
 \format{
 A data frame with 100 observations (rows) and 16 variables (columns):
-\describe{
-\item{y}{dependent variable}
-\item{x1}{intercept}
-\item{x2}{relevant exogenous regressor}
-\item{x3 - x10}{irrelevant exogenous regressors}
-\item{x11}{relevant endogenous regressor}
-\item{u}{structural error (in practice unobserved)}
-\item{z11 - z12}{excluded instruments}
-\item{id}{unique observation identifier}
+\tabular{rl}{
+\strong{name} \tab \strong{variable description} \cr
+y \tab dependent variable \cr
+x1 \tab intercept \cr
+x2 \tab relevant exogenous regressor \cr
+x3 \tab irrelevant exogenous regressor \cr
+x4 \tab irrelevant exogenous regressor \cr
+x5 \tab irrelevant exogenous regressor \cr
+x6 \tab irrelevant exogenous regressor \cr
+x7 \tab irrelevant exogenous regressor \cr
+x8 \tab irrelevant exogenous regressor \cr
+x9 \tab irrelevant exogenous regressor \cr
+x10 \tab irrelevant exogenous regressor \cr
+x11 \tab relevant endogenous regressor \cr
+u \tab structural error (in practice unobserved) \cr
+z11 \tab excluded instrument \cr
+z12 \tab excluded instrument \cr
+id \tab unique observation identifier
 }
 }
 \usage{
