@@ -45,7 +45,7 @@ test_that("ivgets() produces correct output", {
   # to save snapshot output, have to delete time b/c will change
   m1$selection$time.started <- NULL
   m1$selection$time.finished <- NULL
-  expect_snapshot_output(m1)
+  expect_snapshot_output(m1, cran = FALSE)
 
   # have some in keep
   m2 <- ivgets(formula = fml, data = df, t.pval = 1/100,
@@ -54,7 +54,7 @@ test_that("ivgets() produces correct output", {
   expect_identical(names(m2$final$coefficients), c("cons", "x1", "x2", "x6"))
   m2$selection$time.started <- NULL
   m2$selection$time.finished <- NULL
-  expect_snapshot_output(m2)
+  expect_snapshot_output(m2, cran = FALSE)
 
   # have diagnostics
   m3 <- ivgets(formula = fml, data = df, t.pval = 1/100, weak = 0.05,
@@ -67,7 +67,7 @@ test_that("ivgets() produces correct output", {
   expect_identical(m3$final$coefficients, m1$final$coefficients)
   m3$selection$time.started <- NULL
   m3$selection$time.finished <- NULL
-  expect_snapshot_output(m3)
+  expect_snapshot_output(m3, cran = FALSE)
 
   # have more diagnostics
   m4 <- ivgets(formula = fml, data = df, t.pval = 1/100, weak = 0.05,
@@ -78,7 +78,7 @@ test_that("ivgets() produces correct output", {
   expect_identical(m4$final$coefficients, m1$final$coefficients)
   m4$selection$time.started <- NULL
   m4$selection$time.finished <- NULL
-  expect_snapshot_output(m4)
+  expect_snapshot_output(m4, cran = FALSE)
 
   # make selection p-value less strict, so expect to retain more
   m5 <- ivgets(formula = fml, data = df, t.pval = 1/50,
@@ -88,7 +88,7 @@ test_that("ivgets() produces correct output", {
   expect_identical(names(m5$final$coefficients), c("cons", "x1", "x5", "x6"))
   m5$selection$time.started <- NULL
   m5$selection$time.finished <- NULL
-  expect_snapshot_output(m5)
+  expect_snapshot_output(m5, cran = FALSE)
 
   # can also select keep via indices corresponding to indices in original df
   # should keep "cons" and "x1" (plus endogenous "x6")
@@ -97,7 +97,7 @@ test_that("ivgets() produces correct output", {
   expect_identical(m6$keep, c("cons", "x1", "x6"))
   m6$selection$time.started <- NULL
   m6$selection$time.finished <- NULL
-  expect_snapshot_output(m6)
+  expect_snapshot_output(m6, cran = FALSE)
 
   # check diagnostics are really used by setting a ridiculous sign. level
   # in this case, GUM might does not pass, so expect warning
