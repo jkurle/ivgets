@@ -43,6 +43,7 @@ test_that("ivgets() produces correct output", {
   # have selected the DGP: cons, x1, x6
   expect_identical(names(m1$final$coefficients), c("cons", "x1", "x6"))
   # to save snapshot output, have to delete time b/c will change
+  m1$selection$call <- NULL
   m1$selection$time.started <- NULL
   m1$selection$time.finished <- NULL
   expect_snapshot_output(m1, cran = FALSE)
@@ -52,6 +53,7 @@ test_that("ivgets() produces correct output", {
                keep_exog = c("cons", "x1", "x2"), print.searchinfo = FALSE)
   expect_identical(m2$keep, c("cons", "x1", "x2", "x6"))
   expect_identical(names(m2$final$coefficients), c("cons", "x1", "x2", "x6"))
+  m2$selection$call <- NULL
   m2$selection$time.started <- NULL
   m2$selection$time.finished <- NULL
   expect_snapshot_output(m2, cran = FALSE)
@@ -65,6 +67,7 @@ test_that("ivgets() produces correct output", {
   # still finds DGP (so diagnostics have not cause to retain more)
   # same coefficient result as m1 (but not overall b/c call is different)
   expect_identical(m3$final$coefficients, m1$final$coefficients)
+  m3$selection$call <- NULL
   m3$selection$time.started <- NULL
   m3$selection$time.finished <- NULL
   expect_snapshot_output(m3, cran = FALSE)
@@ -76,6 +79,7 @@ test_that("ivgets() produces correct output", {
                ar.LjungB = c(1, 0.05), arch.LjungB = c(1, 0.05))
   # still finds DGP (so diagnostics have not cause to retain more)
   expect_identical(m4$final$coefficients, m1$final$coefficients)
+  m4$selection$call <- NULL
   m4$selection$time.started <- NULL
   m4$selection$time.finished <- NULL
   expect_snapshot_output(m4, cran = FALSE)
@@ -86,6 +90,7 @@ test_that("ivgets() produces correct output", {
   # now spuriously retain x5
   expect_identical(m5$keep, "x6")
   expect_identical(names(m5$final$coefficients), c("cons", "x1", "x5", "x6"))
+  m5$selection$call <- NULL
   m5$selection$time.started <- NULL
   m5$selection$time.finished <- NULL
   expect_snapshot_output(m5, cran = FALSE)
@@ -95,6 +100,7 @@ test_that("ivgets() produces correct output", {
   m6 <- ivgets(formula = fml, data = df, t.pval = 1/100, keep = c(4, 5),
                print.searchinfo = FALSE)
   expect_identical(m6$keep, c("cons", "x1", "x6"))
+  m6$selection$call <- NULL
   m6$selection$time.started <- NULL
   m6$selection$time.finished <- NULL
   expect_snapshot_output(m6, cran = FALSE)
