@@ -178,14 +178,15 @@ ivisat <- function(
 #' object returned by [ivreg::ivreg()].
 #'
 #' @inheritParams ivisat
-#' @param ivreg_object An object of class \code{"ivreg"}, as returned by
+#' @param y An object of class \code{"ivreg"}, as returned by
 #' [ivreg::ivreg()].
+#' @param ... Further arguments passed to or from other methods.
 #'
 #' @importFrom gets isat
 #' @export
 
 isat.ivreg <- function(
-  ivreg_object,
+  y,
   # gets::isat() arguments
   # unused: y, mc, ar, ewma, mxreg, vcov.type, user.diagnostics, user.estimator,
   # gof.function, gof.method, LAPACK, include.gum (deprecated)
@@ -197,25 +198,26 @@ isat.ivreg <- function(
   max.paths = NULL, parallel.options = NULL, turbo = FALSE, tol = 1e-07,
   max.regs = NULL, print.searchinfo = TRUE, plot = NULL, alarm = FALSE,
   # new arguments
-  overid = NULL, weak = NULL) {
+  overid = NULL, weak = NULL,
+  ...) {
 
   # R's method dispatch will already return error if no method defined for that class
   # so check is redundant, keep if people call explicitly isat.ivreg()
-  if (!identical(class(ivreg_object), "ivreg")) { # nocov start
-    stop("Argument 'ivreg_object' must be an ivreg object from the package
+  if (!identical(class(y), "ivreg")) { # nocov start
+    stop("Argument 'y' must be an ivreg object from the package
          ivreg.")
   } # nocov end
-  if (is.null(ivreg_object$model)) {
+  if (is.null(y$model)) {
     stop("Please specify 'model = TRUE' in the original function call so the
          data is part of the model object.")
   }
-  if (!is.null(ivreg_object$weights)) {
+  if (!is.null(y$weights)) {
     stop("GETS modelling currently does not support weights.")
   }
 
   # can build on the ivgets function, only need to extract the data and formula
-  formula <- ivreg_object$formula
-  data <- ivreg_object$model
+  formula <- y$formula
+  data <- y$model
 
   aux <- ivisat(formula = formula, data = data, iis = iis, sis = sis, tis = tis,
                 uis = uis, blocks = blocks, ratio.threshold = ratio.threshold,

@@ -5,7 +5,7 @@
 \title{Gets modelling on an ivreg object}
 \usage{
 \method{gets}{ivreg}(
-  ivreg_object,
+  x,
   gum.result = NULL,
   t.pval = 0.05,
   wald.pval = t.pval,
@@ -24,11 +24,12 @@
   alarm = FALSE,
   keep_exog = NULL,
   overid = NULL,
-  weak = NULL
+  weak = NULL,
+  ...
 )
 }
 \arguments{
-\item{ivreg_object}{An object of class \code{"ivreg"}, as returned by
+\item{x}{An object of class \code{"ivreg"}, as returned by
 \code{\link[ivreg:ivreg]{ivreg::ivreg()}}.}
 
 \item{gum.result}{a \code{list} with the estimation results of the General Unrestricted Model (GUM), or \code{NULL} (default). If the estimation results of the GUM are already available, then re-estimation of the GUM is skipped if the estimation results are provided via this argument}
@@ -80,6 +81,8 @@ as the significance level.}
 should be used as a diagnostic check for model selection or a numeric value
 between 0 and 1. In the latter case, the test is conducted using this value
 as the significance level.}
+
+\item{...}{Further arguments passed to or from other methods.}
 }
 \description{
 \code{gets.ivreg} conducts general-to-specific model selection on an ivreg

@@ -5,7 +5,7 @@
 \title{Indicator saturation modelling on an ivreg object}
 \usage{
 \method{isat}{ivreg}(
-  ivreg_object,
+  y,
   iis = TRUE,
   sis = FALSE,
   tis = FALSE,
@@ -31,11 +31,12 @@
   plot = NULL,
   alarm = FALSE,
   overid = NULL,
-  weak = NULL
+  weak = NULL,
+  ...
 )
 }
 \arguments{
-\item{ivreg_object}{An object of class \code{"ivreg"}, as returned by
+\item{y}{An object of class \code{"ivreg"}, as returned by
 \code{\link[ivreg:ivreg]{ivreg::ivreg()}}.}
 
 \item{iis}{logical. If \code{TRUE}, impulse indicator saturation is performed.}
@@ -97,6 +98,8 @@ as the significance level.}
 should be used as a diagnostic check for model selection or a numeric value
 between 0 and 1. In the latter case, the test is conducted using this value
 as the significance level.}
+
+\item{...}{Further arguments passed to or from other methods.}
 }
 \description{
 \code{isat.ivreg} conducts indicator saturation model selection on an ivreg

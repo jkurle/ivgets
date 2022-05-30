@@ -151,15 +151,16 @@ ivgets <- function(
 #' object returned by [ivreg::ivreg()].
 #'
 #' @inheritParams ivgets
-#' @param ivreg_object An object of class \code{"ivreg"}, as returned by
+#' @param x An object of class \code{"ivreg"}, as returned by
 #' [ivreg::ivreg()].
+#' @param ... Further arguments passed to or from other methods.
 #'
 #' @importFrom gets gets
 #' @export
 
 
 gets.ivreg <- function(
-  ivreg_object,
+  x,
   # gets::getsFun() arguments
   # unused: untransformed.residuals, user.estimator, gof.function, gof.method,
   # keep, LAPACK
@@ -169,25 +170,26 @@ gets.ivreg <- function(
   max.paths = NULL, turbo = FALSE, tol = 1e-07, max.regs = NULL,
   print.searchinfo = TRUE, alarm = FALSE,
   # new arguments
-  keep_exog = NULL, overid = NULL, weak = NULL) {
+  keep_exog = NULL, overid = NULL, weak = NULL,
+  ...) {
 
   # R's method dispatch will already return error if no method defined for that class
   # so check is redundant, keep if people call explicitly gets.ivreg()
-  if (!identical(class(ivreg_object), "ivreg")) { # nocov start
-    stop("Argument 'ivreg_object' must be an ivreg object from the package
+  if (!identical(class(x), "ivreg")) { # nocov start
+    stop("Argument 'x' must be an ivreg object from the package
          ivreg.")
   } # nocov end
-  if (is.null(ivreg_object$model)) {
+  if (is.null(x$model)) {
     stop("Please specify 'model = TRUE' in the original function call so the
          data is part of the model object.")
   }
-  if (!is.null(ivreg_object$weights)) {
+  if (!is.null(x$weights)) {
     stop("GETS modelling currently does not support weights.")
   }
 
   # can build on the ivgets function, only need to extract the data and formula
-  formula <- ivreg_object$formula
-  data <- ivreg_object$model
+  formula <- x$formula
+  data <- x$model
 
   aux <- ivgets(formula = formula, data = data, gum.result = gum.result,
                 t.pval = t.pval, wald.pval = t.pval, do.pet = do.pet,
