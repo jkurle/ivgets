@@ -101,6 +101,14 @@ as the significance level.}
 
 \item{...}{Further arguments passed to or from other methods.}
 }
+\value{
+Returns a list of class \code{"ivisat"} with two named elements.
+\code{$selection} stores the selection results from
+\code{\link[gets]{isat}} (including paths, terminal models, and best
+specification). \code{$final} stores the \code{\link[ivreg]{ivreg}} model
+object of the best specification or \code{NULL} if the GUM does not pass
+all diagnostics.
+}
 \description{
 \code{isat.ivreg} conducts indicator saturation model selection on an ivreg
 object returned by \code{\link[ivreg:ivreg]{ivreg::ivreg()}}.

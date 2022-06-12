@@ -84,6 +84,16 @@ as the significance level.}
 
 \item{...}{Further arguments passed to or from other methods.}
 }
+\value{
+Returns a list of class \code{"ivgets"} with three named elements.
+\code{$selection} stores the selection results from
+\code{\link[gets]{getsFun}} (including paths, terminal models, and best
+specification). \code{$final} stores the \code{\link[ivreg]{ivreg}} model
+object of the best specification or \code{NULL} if the GUM does not pass
+all diagnostics. \code{$keep} stores the names of the regressors that were
+not selected over, including the endogenous regressors, which are always
+kept.
+}
 \description{
 \code{gets.ivreg} conducts general-to-specific model selection on an ivreg
 object returned by \code{\link[ivreg:ivreg]{ivreg::ivreg()}}.

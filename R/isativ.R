@@ -8,6 +8,13 @@
 #'   matrices must have named columns that should not overlap with column names
 #'   of any other matrices in the list.
 #'
+#' @return Returns a list of class \code{"ivisat"} with two named elements.
+#'   \code{$selection} stores the selection results from
+#'   \code{\link[gets]{isat}} (including paths, terminal models, and best
+#'   specification). \code{$final} stores the \code{\link[ivreg]{ivreg}} model
+#'   object of the best specification or \code{NULL} if the GUM does not pass
+#'   all diagnostics.
+#'
 #' @importFrom gets isat
 #' @export
 
@@ -181,6 +188,8 @@ ivisat <- function(
 #' @param y An object of class \code{"ivreg"}, as returned by
 #' [ivreg::ivreg()].
 #' @param ... Further arguments passed to or from other methods.
+#'
+#' @inherit ivisat return
 #'
 #' @importFrom gets isat
 #' @export

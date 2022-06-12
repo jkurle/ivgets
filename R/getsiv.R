@@ -19,6 +19,15 @@
 #' between 0 and 1. In the latter case, the test is conducted using this value
 #' as the significance level.
 #'
+#' @return Returns a list of class \code{"ivgets"} with three named elements.
+#'   \code{$selection} stores the selection results from
+#'   \code{\link[gets]{getsFun}} (including paths, terminal models, and best
+#'   specification). \code{$final} stores the \code{\link[ivreg]{ivreg}} model
+#'   object of the best specification or \code{NULL} if the GUM does not pass
+#'   all diagnostics. \code{$keep} stores the names of the regressors that were
+#'   not selected over, including the endogenous regressors, which are always
+#'   kept.
+#'
 #' @importFrom gets gets
 #' @export
 
@@ -154,6 +163,8 @@ ivgets <- function(
 #' @param x An object of class \code{"ivreg"}, as returned by
 #' [ivreg::ivreg()].
 #' @param ... Further arguments passed to or from other methods.
+#'
+#' @inherit ivgets return
 #'
 #' @importFrom gets gets
 #' @export

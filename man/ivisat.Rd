@@ -100,6 +100,14 @@ should be used as a diagnostic check for model selection or a numeric value
 between 0 and 1. In the latter case, the test is conducted using this value
 as the significance level.}
 }
+\value{
+Returns a list of class \code{"ivisat"} with two named elements.
+\code{$selection} stores the selection results from
+\code{\link[gets]{isat}} (including paths, terminal models, and best
+specification). \code{$final} stores the \code{\link[ivreg]{ivreg}} model
+object of the best specification or \code{NULL} if the GUM does not pass
+all diagnostics.
+}
 \description{
 Indicator saturation modelling for 2SLS models
 }

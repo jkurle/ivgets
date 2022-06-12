@@ -83,6 +83,16 @@ should be used as a diagnostic check for model selection or a numeric value
 between 0 and 1. In the latter case, the test is conducted using this value
 as the significance level.}
 }
+\value{
+Returns a list of class \code{"ivgets"} with three named elements.
+\code{$selection} stores the selection results from
+\code{\link[gets]{getsFun}} (including paths, terminal models, and best
+specification). \code{$final} stores the \code{\link[ivreg]{ivreg}} model
+object of the best specification or \code{NULL} if the GUM does not pass
+all diagnostics. \code{$keep} stores the names of the regressors that were
+not selected over, including the endogenous regressors, which are always
+kept.
+}
 \description{
 General-to-specific modelling for 2SLS models
 }
