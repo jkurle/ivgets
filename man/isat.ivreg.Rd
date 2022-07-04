@@ -2,7 +2,7 @@
 % Please edit documentation in R/isativ.R
 \name{isat.ivreg}
 \alias{isat.ivreg}
-\title{Indicator saturation modelling on an ivreg object}
+\title{Indicator saturation modeling on an ivreg object}
 \usage{
 \method{isat}{ivreg}(
   y,

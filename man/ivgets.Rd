@@ -2,7 +2,7 @@
 % Please edit documentation in R/getsiv.R
 \name{ivgets}
 \alias{ivgets}
-\title{General-to-specific modelling for 2SLS models}
+\title{General-to-specific modeling for 2SLS models}
 \usage{
 ivgets(
   formula,
@@ -94,5 +94,5 @@ not selected over, including the endogenous regressors, which are always
 kept.
 }
 \description{
-General-to-specific modelling for 2SLS models
+General-to-specific modeling for 2SLS models
 }

@@ -1,4 +1,4 @@
-#' Indicator saturation modelling for 2SLS models
+#' Indicator saturation modeling for 2SLS models
 #'
 #' @inheritParams gets::isat
 #' @inheritParams ivgets
@@ -179,7 +179,7 @@ ivisat <- function(
 
 
 
-#' Indicator saturation modelling on an ivreg object
+#' Indicator saturation modeling on an ivreg object
 #'
 #' \code{isat.ivreg} conducts indicator saturation model selection on an ivreg
 #' object returned by [ivreg::ivreg()].

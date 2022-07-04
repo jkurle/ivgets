@@ -2,7 +2,7 @@
 % Please edit documentation in R/getsiv.R
 \name{gets.ivreg}
 \alias{gets.ivreg}
-\title{Gets modelling on an ivreg object}
+\title{Gets modeling on an ivreg object}
 \usage{
 \method{gets}{ivreg}(
   x,

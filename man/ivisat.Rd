@@ -2,7 +2,7 @@
 % Please edit documentation in R/isativ.R
 \name{ivisat}
 \alias{ivisat}
-\title{Indicator saturation modelling for 2SLS models}
+\title{Indicator saturation modeling for 2SLS models}
 \usage{
 ivisat(
   formula,
@@ -109,5 +109,5 @@ object of the best specification or \code{NULL} if the GUM does not pass
 all diagnostics.
 }
 \description{
-Indicator saturation modelling for 2SLS models
+Indicator saturation modeling for 2SLS models
 }

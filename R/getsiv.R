@@ -1,4 +1,4 @@
-#' General-to-specific modelling for 2SLS models
+#' General-to-specific modeling for 2SLS models
 #'
 #' @inheritParams gets::getsFun
 #' @param formula A formula in the format \code{y ~ x1 + x2 | z1 + z2}.
@@ -154,7 +154,7 @@ ivgets <- function(
 
 }
 
-#' Gets modelling on an ivreg object
+#' Gets modeling on an ivreg object
 #'
 #' \code{gets.ivreg} conducts general-to-specific model selection on an ivreg
 #' object returned by [ivreg::ivreg()].
