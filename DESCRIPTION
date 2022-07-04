@@ -27,5 +27,4 @@ Suggests:
 URL: https://github.com/jkurle/ivgets
 BugReports: https://github.com/jkurle/ivgets/issues
 VignetteBuilder: knitr
-Remotes: gsucarrat/gets/gets
 Config/testthat/edition: 3
