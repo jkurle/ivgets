@@ -1,4 +1,12 @@
 # CRAN comments for: ivgets
+
+## Resubmission, 6 July 2022
+
+No published reference about the methods in this package is available, I will add it
+in the future when it is available.
+
+## Original Submission
+
 #### 4 July 2022, version 0.1.0
 
 ## Test environments
