@@ -1,9 +1,11 @@
 # CRAN comments for: ivgets
 
-## Resubmission, 6 July 2022
+## Second Resubmission, 6 July 2022
 
-No published reference about the methods in this package is available, I will add it
-in the future when it is available.
+* The title should contain "2SLS" and not "2sls" because this is a standard abbreviation in the econometrics and statistics literature. "2SLS" stands for "Two-Stage Least Squares". See also, for example, https://www.stata.com/manuals/rivregress.pdf
+
+* There is no published reference about the methods that are implemented in this package since this is part of my ongoing PhD research. I agreed with the CRAN maintainer Victoria Wimmer that I will add a reference to the DESCRIPTION once such a reference is available.
+
 
 ## Original Submission
 
