@@ -5,8 +5,11 @@
 
 <!-- badges: start -->
 
+[![R build
+status](https://github.com/jkurle/ivgets/workflows/R-CMD-check/badge.svg)](https://github.com/jkurle/ivgets/actions)
 [![Codecov test
 coverage](https://codecov.io/gh/jkurle/ivgets/branch/master/graph/badge.svg)](https://app.codecov.io/gh/jkurle/ivgets?branch=master)
+[![](https://www.r-pkg.org/badges/version/ivgets?color=blue)](https://cran.r-project.org/package=ivgets)
 <!-- badges: end -->
 
 The *ivgets* package provides general-to-specific modeling functionality
@@ -118,6 +121,15 @@ include all our potentially relevant exogenous regressors in the model.
 
 ``` r
 library(ivgets)
+#> Lade nötiges Paket: gets
+#> Lade nötiges Paket: zoo
+#> 
+#> Attache Paket: 'zoo'
+#> Die folgenden Objekte sind maskiert von 'package:base':
+#> 
+#>     as.Date, as.Date.numeric
+#> Lade nötiges Paket: parallel
+#> Lade nötiges Paket: ivreg
 # we specify "-1" in the formula because x1 is already an intercept in our data frame
 fml <- y ~ -1+x1+x2+x3+x4+x5+x6+x7+x8+x9+x10+x11 | -1+x1+x2+x3+x4+x5+x6+x7+x8+x9+x10+z11+z12
 base <- ivreg(formula = fml, data = artificial2sls_contaminated)

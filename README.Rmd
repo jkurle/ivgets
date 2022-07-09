@@ -16,7 +16,9 @@ knitr::opts_chunk$set(
 # ivgets
 
 <!-- badges: start -->
+[![R build status](https://github.com/jkurle/ivgets/workflows/R-CMD-check/badge.svg)](https://github.com/jkurle/ivgets/actions)
 [![Codecov test coverage](https://codecov.io/gh/jkurle/ivgets/branch/master/graph/badge.svg)](https://app.codecov.io/gh/jkurle/ivgets?branch=master)
+[![](https://www.r-pkg.org/badges/version/ivgets?color=blue)](https://cran.r-project.org/package=ivgets)
 <!-- badges: end -->
 
 The _ivgets_ package provides general-to-specific modeling functionality for
