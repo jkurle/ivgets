@@ -35,9 +35,36 @@ comparison2 <- microbenchmark(f1(x=x,y=y,z=z), f2(x=x,y=y,z=z), times = 10000)
 # what does ivreg::ivreg return?
 data <- as.data.frame(cbind(y, x, z2))
 model1 <- ivreg(formula = y~x1+x2+x3+x4+x5+x6+x7+x8+x9+x10|x2+x3+x4+x5+x6+x7+x8+x9+x10+z, data = data)
+model2 <- twosls(formula = y~x1+x2+x3+x4+x5+x6+x7+x8+x9+x10|x2+x3+x4+x5+x6+x7+x8+x9+x10+z, data = data)
+identical(coef(model1), coef(model2))
+identical(vcov(model1), vcov(model2))
 
-twosls(formula = y~-1+x1+x2+x3+x4+x5+x6+x7+x8+x9+x10|x2+x3+x4+x5+x6+x7+x8+x9+x10+z, data = data)
+slow <- ivisat(formula = y~-1+x1+x2+x3+x4+x5+x6+x7+x8+x9+x10|-1+x2+x3+x4+x5+x6+x7+x8+x9+x10+z,
+               data = data[1:100, ], iis = TRUE, sis = FALSE, tis = FALSE)
+fast <- ivisat(formula = y~-1+x1+x2+x3+x4+x5+x6+x7+x8+x9+x10|-1+x2+x3+x4+x5+x6+x7+x8+x9+x10+z,
+               data = data[1:100, ], iis = TRUE, sis = FALSE, tis = FALSE, fast = TRUE)
+library(waldo)
+compare(slow, fast, max_diffs = 20)
+# only differences in attributes or the fast argument
 
+microbenchmark(ivisat(formula = y~-1+x1+x2+x3+x4+x5+x6+x7+x8+x9+x10|-1+x2+x3+x4+x5+x6+x7+x8+x9+x10+z,
+                      data = data[1:100, ], iis = TRUE, sis = FALSE, tis = FALSE, print.searchinfo = FALSE),
+               ivisat(formula = y~-1+x1+x2+x3+x4+x5+x6+x7+x8+x9+x10|-1+x2+x3+x4+x5+x6+x7+x8+x9+x10+z,
+                      data = data[1:100, ], iis = TRUE, sis = FALSE, tis = FALSE, print.searchinfo = FALSE, turbo = TRUE),
+               ivisat(formula = y~-1+x1+x2+x3+x4+x5+x6+x7+x8+x9+x10|-1+x2+x3+x4+x5+x6+x7+x8+x9+x10+z,
+                      data = data[1:100, ], iis = TRUE, sis = FALSE, tis = FALSE, print.searchinfo = FALSE, fast = TRUE),
+               ivisat(formula = y~-1+x1+x2+x3+x4+x5+x6+x7+x8+x9+x10|-1+x2+x3+x4+x5+x6+x7+x8+x9+x10+z,
+                      data = data[1:100, ], iis = TRUE, sis = FALSE, tis = FALSE, print.searchinfo = FALSE, turbo = TRUE, fast = TRUE),
+               times = 10)
+# baseline 47.4
+# baseline + turbo 29.4
+# fast 37.7
+# fast + turbo 23.2
 
-
-
+profvis::profvis(ivisat(formula = y~-1+x1+x2+x3+x4+x5+x6+x7+x8+x9+x10|-1+x2+x3+x4+x5+x6+x7+x8+x9+x10+z,
+                        data = data[1:100, ], iis = TRUE, sis = FALSE, tis = FALSE, print.searchinfo = FALSE))
+# 11700 in ivreg::ivreg
+profvis::profvis(ivisat(formula = y~-1+x1+x2+x3+x4+x5+x6+x7+x8+x9+x10|-1+x2+x3+x4+x5+x6+x7+x8+x9+x10+z,
+                        data = data[1:100, ], iis = TRUE, sis = FALSE, tis = FALSE, print.searchinfo = FALSE, fast = TRUE))
+# 7360 in ivgets::twosls
+profvis::profvis(twosls.fit(x = x, y = y, z = z)) # no result because mostly in C
