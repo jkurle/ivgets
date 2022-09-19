@@ -326,5 +326,84 @@ factory_indicators <- function(n) {
 
 }
 
+#' 2SLS estimator
+#'
+#' Stripped down version of [ivreg::ivreg.fit()] that does not allow for
+#' weights, offset, other methods than 2SLS, and does not calculate influence
+#' statistics.
+#'
+#' @export
+
+twosls.fit <- function(x, y, z) {
+
+  n <- NROW(y)
+  p <- ncol(x)
+  stopifnot(n == nrow(x))
+  stopifnot(n == nrow(z))
+  stopifnot(ncol(z) >= ncol(x))
+
+  auxreg <- lm.fit(z, x) # run first stage
+  xz <- as.matrix(auxreg$fitted.values) # first stage fitted values
+  colnames(xz) <- colnames(x)
+  fit <- lm.fit(xz, y) # run second stage
+  ok <- which(!is.na(fit$coefficients)) # regressors for which coefficient is not NA
+  yhat <- drop(x[, ok, drop = FALSE] %*% fit$coefficients[ok]) # fitted values of second stage using actual x values
+  names(yhat) <- names(y)
+  res <- y - yhat # residuals of second stage
+  ucov <- chol2inv(fit$qr$qr[1:length(ok), 1:length(ok), drop = FALSE])
+  colnames(ucov) <- rownames(ucov) <- names(fit$coefficients[ok])
+  sigma <- sqrt(sum(res^2)/fit$df.residual)
+
+  rval <- list(coefficients = fit$coefficients, residuals = res,
+               residuals1 = auxreg$residuals, residuals2 = fit$residuals,
+               fitted.values = yhat, n = n, nobs = n, p = p, q = ncol(z),
+               rank = fit$rank, df.residual = fit$df.residual,
+               cov.unscaled = ucov, sigma = sigma, x = xz, qr = fit$qr,
+               qr1 = auxreg$qr, rank1 = auxreg$rank,
+               coefficients1 = coef(auxreg), df.residual1 = auxreg$df.residual)
+
+  return(rval)
+
+}
+
+#' 2SLS estimator wrapper
+#'
+#' Stripped down version of [ivreg::ivreg()] that does not allow for
+#' weights, offset, other methods than 2SLS, and does not calculate influence
+#' statistics.
+#'
+#' Based on [ivgets::twosls.fit()].
+#'
+#' @export
+
+twosls <- function(formula, data) {
+
+  mf <- match.call(expand.dots = FALSE)
+  m <- match(c("formula", "data", "subset", "na.action", "weights", "offset"), names(mf), 0)
+  mf <- mf[c(1, m)]
+  mf$drop.unused.levels <- TRUE
+  formula <- Formula::as.Formula(formula)
+  stopifnot(length(formula)[1L] == 1L, length(formula)[2L] %in% 1L:2L)
+  mf$formula <- formula
+  mf[[1]] <- as.name("model.frame")
+  mf <- eval(mf, parent.frame())
+  Y <- model.response(mf, "numeric")
+  mt <- terms(formula, data = data)
+  mtX <- terms(formula, data= data, rhs = 1)
+  X <- model.matrix(mtX, mf, contrasts.arg = NULL)
+  if (length(formula)[2] < 2L) {
+    mtZ <- NULL
+    Z <- NULL
+  } else {
+    mtZ <- delete.response(terms(formula, data = data, rhs = 2))
+    Z <- model.matrix(mtZ, mf, contrasts.arg = NULL)
+  }
+  rval <- twosls.fit(x = X, y = Y, z = Z)
+
+  # give class "ivreg" so that can use methods for ivreg objects
+  class(rval) <- "ivreg"
+  return(rval)
+
+}
 
 
