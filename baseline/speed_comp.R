@@ -56,10 +56,19 @@ microbenchmark(ivisat(formula = y~-1+x1+x2+x3+x4+x5+x6+x7+x8+x9+x10|-1+x2+x3+x4+
                ivisat(formula = y~-1+x1+x2+x3+x4+x5+x6+x7+x8+x9+x10|-1+x2+x3+x4+x5+x6+x7+x8+x9+x10+z,
                       data = data[1:100, ], iis = TRUE, sis = FALSE, tis = FALSE, print.searchinfo = FALSE, turbo = TRUE, fast = TRUE),
                times = 10)
+# old data
 # baseline 47.4
 # baseline + turbo 29.4
 # fast 37.7
 # fast + turbo 23.2
+# new data (two runs, separated by ;)
+microbenchmark(ivisat(formula = y~-1+x1+x2+x3+x4+x5+x6+x7+x8+x9+x10|-1+x2+x3+x4+x5+x6+x7+x8+x9+x10+z,
+                      data = data[1:100, ], iis = TRUE, sis = FALSE, tis = FALSE, print.searchinfo = FALSE),
+               ivisat(formula = y~-1+x1+x2+x3+x4+x5+x6+x7+x8+x9+x10|-1+x2+x3+x4+x5+x6+x7+x8+x9+x10+z,
+                      data = data[1:100, ], iis = TRUE, sis = FALSE, tis = FALSE, print.searchinfo = FALSE, fast = TRUE),
+               times = 10)
+# baseline 53; 48
+# fast 41.7; 36
 
 profvis::profvis(ivisat(formula = y~-1+x1+x2+x3+x4+x5+x6+x7+x8+x9+x10|-1+x2+x3+x4+x5+x6+x7+x8+x9+x10+z,
                         data = data[1:100, ], iis = TRUE, sis = FALSE, tis = FALSE, print.searchinfo = FALSE))
@@ -67,4 +76,4 @@ profvis::profvis(ivisat(formula = y~-1+x1+x2+x3+x4+x5+x6+x7+x8+x9+x10|-1+x2+x3+x
 profvis::profvis(ivisat(formula = y~-1+x1+x2+x3+x4+x5+x6+x7+x8+x9+x10|-1+x2+x3+x4+x5+x6+x7+x8+x9+x10+z,
                         data = data[1:100, ], iis = TRUE, sis = FALSE, tis = FALSE, print.searchinfo = FALSE, fast = TRUE))
 # 7360 in ivgets::twosls
-profvis::profvis(twosls.fit(x = x, y = y, z = z)) # no result because mostly in C
+
