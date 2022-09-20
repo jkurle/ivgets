@@ -326,46 +326,6 @@ factory_indicators <- function(n) {
 
 }
 
-#' 2SLS estimator
-#'
-#' Stripped down version of [ivreg::ivreg.fit()] that does not allow for
-#' weights, offset, other methods than 2SLS, and does not calculate influence
-#' statistics.
-#'
-#' @export
-
-twosls.fit <- function(x, y, z) {
-
-  n <- NROW(y)
-  p <- ncol(x)
-  stopifnot(n == nrow(x))
-  stopifnot(n == nrow(z))
-  stopifnot(ncol(z) >= ncol(x))
-
-  auxreg <- lm.fit(z, x) # run first stage
-  xz <- as.matrix(auxreg$fitted.values) # first stage fitted values
-  colnames(xz) <- colnames(x)
-  fit <- lm.fit(xz, y) # run second stage
-  ok <- which(!is.na(fit$coefficients)) # regressors for which coefficient is not NA
-  yhat <- drop(x[, ok, drop = FALSE] %*% fit$coefficients[ok]) # fitted values of second stage using actual x values
-  names(yhat) <- names(y)
-  res <- y - yhat # residuals of second stage
-  ucov <- chol2inv(fit$qr$qr[1:length(ok), 1:length(ok), drop = FALSE])
-  colnames(ucov) <- rownames(ucov) <- names(fit$coefficients[ok])
-  sigma <- sqrt(sum(res^2)/fit$df.residual)
-
-  rval <- list(coefficients = fit$coefficients, residuals = res,
-               residuals1 = auxreg$residuals, residuals2 = fit$residuals,
-               fitted.values = yhat, n = n, nobs = n, p = p, q = ncol(z),
-               rank = fit$rank, df.residual = fit$df.residual,
-               cov.unscaled = ucov, sigma = sigma, x = xz, qr = fit$qr,
-               qr1 = auxreg$qr, rank1 = auxreg$rank,
-               coefficients1 = coef(auxreg), df.residual1 = auxreg$df.residual)
-
-  return(rval)
-
-}
-
 #' 2SLS estimator wrapper
 #'
 #' Stripped down version of [ivreg::ivreg()] that does not allow for
