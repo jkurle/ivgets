@@ -485,3 +485,56 @@ test_that("factory_indicators() works correctly", {
   expect_error(c1(name = "nonexistent", uis = uislist), "Retained indicator could not be created or found")
 
 })
+
+
+test_that("twosls() works correctly", {
+
+  set.seed(1234)
+  y <- rnorm(100)
+  x1 <- rnorm(100)
+  x2 <- rnorm(100)
+  z2 <- rnorm(100)
+  data <- data.frame(y = y, x1 = x1, x2 = x2, z2 = z2)
+
+  fml1 <- y ~ x1+x2 | x1+z2 # with intercept
+  fml2 <- y ~ -1+x1+x2 | -1+x1+z2 # without intercept
+
+  a1 <- twosls(formula = fml1, data = data)
+  expect_identical(inherits(a1, "ivreg"), TRUE)
+  expect_length(a1, 8)
+  expect_named(a1, c("coefficients", "residuals", "fitted.values", "n", "nobs",
+                     "k", "cov.unscaled", "sigma"))
+  expect_identical(a1$n, a1$nobs)
+  expect_identical(a1$n, 100L)
+  expect_identical(a1$k, 3L)
+  expect_length(a1$coefficients, 3)
+
+  a2 <- twosls(formula = fml2, data = data)
+  expect_identical(inherits(a2, "ivreg"), TRUE)
+  expect_length(a2, 8)
+  expect_named(a2, c("coefficients", "residuals", "fitted.values", "n", "nobs",
+                     "k", "cov.unscaled", "sigma"))
+  expect_identical(a2$n, a2$nobs)
+  expect_identical(a2$n, 100L)
+  expect_identical(a2$k, 2L)
+  expect_length(a2$coefficients, 2)
+
+  # check that own estimator coincides with ivreg::ivreg()
+  b1 <- ivreg(formula = fml1, data = data)
+  b2 <- ivreg(formula = fml2, data = data)
+
+  expect_identical(a1$coefficients, b1$coefficients)
+  expect_identical(a2$coefficients, b2$coefficients)
+  expect_identical(a1$cov.unscaled, b1$cov.unscaled)
+  expect_identical(a2$cov.unscaled, b2$cov.unscaled)
+
+  expect_snapshot_output(a1)
+  expect_snapshot_output(a2)
+  expect_snapshot_output(b1)
+  expect_snapshot_output(b2)
+
+})
+
+
+
+

@@ -308,3 +308,47 @@ test_that("ivDiag() works correctly", {
   expect_snapshot_output(d)
 
 })
+
+test_that("ivregFun() uses argument 'fast' correctly", {
+
+  # base setup
+  set.seed(123)
+  df <- data.frame(y = stats::rnorm(10))
+  df$cons <- 1
+  df$x1 <- stats::rnorm(10) # exogenous regressor
+  df$x2 <- stats::rnorm(10) # endogenous regressor
+  df$z2 <- stats::rnorm(10) # excluded instrument
+  y <- as.vector(df$y)
+  x <- as.matrix(df[, c("cons", "x1", "x2"), drop = FALSE])
+  z <- as.matrix(df[, c("z2"), drop = FALSE])
+  fml <- y ~ -1+cons+x1+x2 | -1+cons+x1+z2
+
+  expect_error(ivregFun(y = y, x = x, z = z, formula = fml, tests = TRUE, fast = TRUE),
+               "When specify 'fast == TRUE' must set 'tests == FALSE'.")
+
+  slow <- ivregFun(y = y, x = x, z = z, formula = fml, tests = FALSE, fast = FALSE)
+  fast <- ivregFun(y = y, x = x, z = z, formula = fml, tests = FALSE, fast = TRUE)
+
+  expect_identical(slow, fast)
+
+  set.seed(1234)
+  y <- rnorm(100)
+  x1 <- rnorm(100)
+  x2 <- rnorm(100)
+  z2 <- rnorm(100)
+  x <- cbind(x1, x2)
+  z <- cbind(z2)
+
+  fml1 <- y ~ x1+x2 | x1+z2 # with intercept
+  fml2 <- y ~ -1+x1+x2 | -1+x1+z2 # without intercept
+
+  slow1 <- ivregFun(y = y, x = x, z = z, formula = fml1, tests = FALSE, fast = FALSE)
+  slow2 <- ivregFun(y = y, x = x, z = z, formula = fml2, tests = FALSE, fast = FALSE)
+  fast1 <- ivregFun(y = y, x = x, z = z, formula = fml1, tests = FALSE, fast = TRUE)
+  fast2 <- ivregFun(y = y, x = x, z = z, formula = fml2, tests = FALSE, fast = TRUE)
+
+  expect_identical(slow1, fast1)
+  expect_identical(slow2, fast2)
+
+
+})
