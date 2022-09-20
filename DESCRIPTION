@@ -21,6 +21,7 @@ Imports:
     stringr
 Suggests: 
     covr,
+    Formula,
     knitr,
     rmarkdown,
     testthat (>= 3.0.0)
