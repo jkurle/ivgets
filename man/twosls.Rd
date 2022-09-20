@@ -2,7 +2,7 @@
 % Please edit documentation in R/utility.R
 \name{twosls}
 \alias{twosls}
-\title{2SLS estimator wrapper}
+\title{2SLS estimator}
 \usage{
 twosls(formula, data)
 }
@@ -22,9 +22,9 @@ variance-covariance matrix, and \code{$sigma} the degrees-of-freedom
 adjusted equation standard error.
 }
 \description{
-Stripped down version of \code{\link[ivreg:ivreg]{ivreg::ivreg()}} that does not allow for
-weights, offset, other methods than 2SLS, and does not calculate influence
-statistics. Supposedly faster but returns much less detailed output.
+2SLS estimator that does not allow for weights, offset, other methods than
+2SLS, and does not calculate influence statistics. Supposedly faster but
+returns little output.
 }
 \section{WARNING}{
 
@@ -34,3 +34,4 @@ should not be used outside of its usage in its current form. The class
 assignment is likely to change in the future.
 }
 
+\keyword{internal}

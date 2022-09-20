@@ -326,11 +326,11 @@ factory_indicators <- function(n) {
 
 }
 
-#' 2SLS estimator wrapper
+#' 2SLS estimator
 #'
-#' Stripped down version of [ivreg::ivreg()] that does not allow for
-#' weights, offset, other methods than 2SLS, and does not calculate influence
-#' statistics. Supposedly faster but returns much less detailed output.
+#' 2SLS estimator that does not allow for weights, offset, other methods than
+#' 2SLS, and does not calculate influence statistics. Supposedly faster but
+#' returns little output.
 #'
 #' @inheritParams ivgets
 #'
@@ -349,7 +349,7 @@ factory_indicators <- function(n) {
 #' should not be used outside of its usage in its current form. The class
 #' assignment is likely to change in the future.
 #'
-#' @export
+#' @keywords internal
 
 twosls <- function(formula, data) {
 
