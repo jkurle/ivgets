@@ -370,35 +370,69 @@ twosls.fit <- function(x, y, z) {
 #'
 #' Stripped down version of [ivreg::ivreg()] that does not allow for
 #' weights, offset, other methods than 2SLS, and does not calculate influence
-#' statistics.
+#' statistics. Supposedly faster but returns much less detailed output.
 #'
-#' Based on [ivgets::twosls.fit()].
+#' @inheritParams ivgets
+#'
+#' @return \code{twosls()} returns a list with eight names elements:
+#'   \code{$coefficients} stores the coefficient estimates of the second stage,
+#'   \code{$residuals} the residuals of the structural equation (i.e. using X
+#'   and not Xhat), \code{$fitted.values} the fitted values of the second stage,
+#'   \code{$n} and \code{$nobs} the sample size, \code{$k} the number of
+#'   regressors in the structural equation, \code{$cov.unscaled} the unscaled
+#'   variance-covariance matrix, and \code{$sigma} the degrees-of-freedom
+#'   adjusted equation standard error.
+#'
+#' @section WARNING:
+#' The return value is given class [ivreg::ivreg()] but it is not a true
+#' \code{"ivreg"} object. This does not pose any problems for internal use but
+#' should not be used outside of its usage in its current form. The class
+#' assignment is likely to change in the future.
 #'
 #' @export
 
 twosls <- function(formula, data) {
 
-  mf <- match.call(expand.dots = FALSE)
-  m <- match(c("formula", "data", "subset", "na.action", "weights", "offset"), names(mf), 0)
-  mf <- mf[c(1, m)]
+  # can only use this function when "Formula" is installed
+  if (!requireNamespace("Formula", quietly = TRUE)) { # nocov start
+    stop("Package 'Formula' must be installed to use this function.", .call = FALSE)
+  } # nocov end
+
+  # capture function call
+  mf <- match.call()
   mf$drop.unused.levels <- TRUE
   formula <- Formula::as.Formula(formula)
-  stopifnot(length(formula)[1L] == 1L, length(formula)[2L] %in% 1L:2L)
   mf$formula <- formula
+  # convert formula to model frame
   mf[[1]] <- as.name("model.frame")
   mf <- eval(mf, parent.frame())
-  Y <- model.response(mf, "numeric")
-  mt <- terms(formula, data = data)
+  Y <- model.response(mf, "numeric") # extract depvar
   mtX <- terms(formula, data= data, rhs = 1)
-  X <- model.matrix(mtX, mf, contrasts.arg = NULL)
-  if (length(formula)[2] < 2L) {
-    mtZ <- NULL
-    Z <- NULL
-  } else {
-    mtZ <- delete.response(terms(formula, data = data, rhs = 2))
-    Z <- model.matrix(mtZ, mf, contrasts.arg = NULL)
-  }
-  rval <- twosls.fit(x = X, y = Y, z = Z)
+  X <- model.matrix(mtX, mf, contrasts.arg = NULL) # extract X
+  mtZ <- delete.response(terms(formula, data = data, rhs = 2))
+  Z <- model.matrix(mtZ, mf, contrasts.arg = NULL) # extract Z
+
+  n <- NROW(Y)
+  k <- ncol(X)
+  stopifnot(n == nrow(X))
+  stopifnot(n == nrow(Z))
+  stopifnot(ncol(Z) >= ncol(X))
+
+  fs <- lm.fit(Z, X) # run first stage
+  Xhat <- as.matrix(fs$fitted.values) # first stage fitted values
+  colnames(Xhat) <- colnames(X)
+  ss <- lm.fit(Xhat, Y) # run second stage
+  notna <- which(!is.na(ss$coefficients)) # regressors for which coefficient is not NA
+  Yhat <- drop(X[, notna, drop = FALSE] %*% ss$coefficients[notna]) # fitted values of second stage using actual x values
+  names(Yhat) <- names(Y)
+  res <- Y - Yhat # residuals of second stage
+  varcov <- chol2inv(ss$qr$qr[1:length(notna), 1:length(notna), drop = FALSE])
+  colnames(varcov) <- rownames(varcov) <- names(ss$coefficients[notna])
+  sigma <- sqrt(sum(res^2)/ss$df.residual)
+
+  rval <- list(coefficients = ss$coefficients, residuals = res,
+               fitted.values = Yhat, n = n, nobs = n, k = k,
+               cov.unscaled = varcov, sigma = sigma)
 
   # give class "ivreg" so that can use methods for ivreg objects
   class(rval) <- "ivreg"

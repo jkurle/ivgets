@@ -6,11 +6,31 @@
 \usage{
 twosls(formula, data)
 }
+\arguments{
+\item{formula}{A formula in the format \code{y ~ x1 + x2 | z1 + z2}.}
+
+\item{data}{A data frame with all necessary variables y, x, and z.}
+}
+\value{
+\code{twosls()} returns a list with eight names elements:
+\code{$coefficients} stores the coefficient estimates of the second stage,
+\code{$residuals} the residuals of the structural equation (i.e. using X
+and not Xhat), \code{$fitted.values} the fitted values of the second stage,
+\code{$n} and \code{$nobs} the sample size, \code{$k} the number of
+regressors in the structural equation, \code{$cov.unscaled} the unscaled
+variance-covariance matrix, and \code{$sigma} the degrees-of-freedom
+adjusted equation standard error.
+}
 \description{
 Stripped down version of \code{\link[ivreg:ivreg]{ivreg::ivreg()}} that does not allow for
 weights, offset, other methods than 2SLS, and does not calculate influence
-statistics.
+statistics. Supposedly faster but returns much less detailed output.
 }
-\details{
-Based on \code{\link[=twosls.fit]{twosls.fit()}}.
+\section{WARNING}{
+
+The return value is given class \code{\link[ivreg:ivreg]{ivreg::ivreg()}} but it is not a true
+\code{"ivreg"} object. This does not pose any problems for internal use but
+should not be used outside of its usage in its current form. The class
+assignment is likely to change in the future.
 }
+
