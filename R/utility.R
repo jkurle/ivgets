@@ -351,6 +351,7 @@ factory_indicators <- function(n) {
 #'
 #' @keywords internal
 
+
 twosls <- function(formula, data) {
 
   # can only use this function when "Formula" is installed
@@ -400,4 +401,67 @@ twosls <- function(formula, data) {
 
 }
 
+#' 2SLS estimator alternative
+#'
+#' Test whether is faster than [ivgets::twosls()] but this does not seem to be
+#' the case.
+#'
+#' @inheritParams twosls
+#' @inheritSection twosls WARNING
+#'
+#' @keywords internal
+
+twosls.alt <- function(formula, data) { # nocov start
+
+  # can only use this function when "Formula" is installed
+  if (!requireNamespace("Formula", quietly = TRUE)) { # nocov start
+    stop("Package 'Formula' must be installed to use this function.", .call = FALSE)
+  } # nocov end
+
+  # capture function call
+  mf <- match.call()
+  mf$drop.unused.levels <- TRUE
+  formula <- Formula::as.Formula(formula)
+  mf$formula <- formula
+  # convert formula to model frame
+  mf[[1]] <- as.name("model.frame")
+  mf <- eval(mf, parent.frame())
+  Y <- model.response(mf, "numeric") # extract depvar
+  mtX <- terms(formula, data= data, rhs = 1)
+  X <- model.matrix(mtX, mf, contrasts.arg = NULL) # extract X
+  mtZ <- delete.response(terms(formula, data = data, rhs = 2))
+  Z <- model.matrix(mtZ, mf, contrasts.arg = NULL) # extract Z
+
+  n <- NROW(Y)
+  k <- ncol(X)
+  stopifnot(n == nrow(X))
+  stopifnot(n == nrow(Z))
+  stopifnot(ncol(Z) >= ncol(X))
+
+  # first stage
+  qZ <- qr(Z, tol = 1e-07, LAPACK = FALSE)
+  fscoef <- solve.qr(qZ, x, tol = 1e-07)
+  fsfit <- (Z %*% fscoef)
+  colnames(fsfit) <- colnames(X)
+
+  # second stage
+  qXhat <- qr(fsfit, tol = 1e-07, LAPACK = FALSE)
+  sscoef <- solve.qr(qXhat, y, tol = 1e-07)
+  notna <- which(!is.na(sscoef)) # regressors for which coefficient is not NA
+  ssfit <- X[, notna, drop = FALSE] %*% sscoef[notna] # fitted values of second stage using actual x values
+  names(ssfit) <- names(Y)
+  ssres <- Y - ssfit
+  varcov <- chol2inv(qXhat$qr[1:length(notna), 1:length(notna), drop = FALSE])
+  colnames(varcov) <- rownames(varcov) <- names(sscoef[notna])
+  sigma <- sqrt(sum(ssres^2)/(n-k))
+
+  rval <- list(coefficients = sscoef, residuals = ssres,
+               fitted.values = ssfit, n = n, nobs = n, k = k,
+               cov.unscaled = varcov, sigma = sigma)
+
+  # give class "ivreg" so that can use methods for ivreg objects
+  class(rval) <- "ivreg"
+  return(rval)
+
+} # nocov end
 

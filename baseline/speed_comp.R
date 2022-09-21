@@ -77,3 +77,32 @@ profvis::profvis(ivisat(formula = y~-1+x1+x2+x3+x4+x5+x6+x7+x8+x9+x10|-1+x2+x3+x
                         data = data[1:100, ], iis = TRUE, sis = FALSE, tis = FALSE, print.searchinfo = FALSE, fast = TRUE))
 # 7360 in ivgets::twosls
 
+
+
+
+# compare ivreg, twosls, and twosls.alt in detail
+set.seed(1234)
+y <- matrix(rnorm(1000), ncol = 1)
+x <- matrix(rnorm(1000*10), nrow = 1000, ncol = 10)
+z2 <- matrix(rnorm(1000), ncol = 1)
+colnames(y) <- "y"
+colnames(x) <- paste0("x", 1:10)
+colnames(z2) <- "z"
+z <- cbind(x[, -1], z2)
+
+library(microbenchmark)
+library(ivreg)
+library(ivgets)
+data <- as.data.frame(cbind(y, x, z2))
+formula <- y~-1+x1+x2+x3+x4+x5+x6+x7+x8+x9+x10|-1+x2+x3+x4+x5+x6+x7+x8+x9+x10+z
+
+microbenchmark(ivreg(formula = formula, data = data),
+               twosls(formula = formula, data = data),
+               twosls.alt(formula = formula, data = data),
+               times = 10000)
+# ivreg: 11.39 milliseconds
+# twosls: 6.72 milliseconds
+# twosls.alt: 7.12 milliseconds
+# -> no further potential to speed estimation up
+
+
