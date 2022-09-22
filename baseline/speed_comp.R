@@ -105,4 +105,40 @@ microbenchmark(ivreg(formula = formula, data = data),
 # twosls.alt: 7.12 milliseconds
 # -> no further potential to speed estimation up
 
+# compare 100 vs 500 obs
+set.seed(1234)
+y <- matrix(rnorm(1000), ncol = 1)
+x <- matrix(rnorm(1000*10), nrow = 1000, ncol = 10)
+z2 <- matrix(rnorm(1000), ncol = 1)
+colnames(y) <- "y"
+colnames(x) <- paste0("x", 1:10)
+colnames(z2) <- "z"
+z <- cbind(x[, -1], z2)
+
+library(microbenchmark)
+library(ivreg)
+library(ivgets)
+data <- as.data.frame(cbind(y, x, z2))
+formula <- y~-1+x1+x2+x3+x4+x5+x6+x7+x8+x9+x10|-1+x2+x3+x4+x5+x6+x7+x8+x9+x10+z
+
+microbenchmark(ivisat(formula = formula, data = data[1:100, ], t.pval = 0.01, iis = TRUE, turbo = TRUE, fast = TRUE),
+               ivisat(formula = formula, data = data[1:500, ], t.pval = 0.01, iis = TRUE, turbo = TRUE, fast = TRUE),
+               times = 5)
+# mean 19s
+# mean 96s
+microbenchmark(ivisat(formula = formula, data = data[1:500, ], t.pval = 0.01, iis = TRUE, turbo = TRUE, fast = TRUE, blocks = 100),
+               times = 5)
+
+
+ivisat(formula = formula, data = data[1:100, ], t.pval = 0.01, iis = TRUE, turbo = TRUE, fast = TRUE, blocks = 5)
+ivisat(formula = formula, data = data[1:500, ], t.pval = 0.01, iis = TRUE, turbo = TRUE, fast = TRUE, blocks = 100, print.searchinfo = FALSE)
+
+
+microbenchmark(ivisat(formula = formula, data = data[1:500, ], t.pval = 0.01, iis = TRUE, turbo = TRUE, fast = TRUE, blocks = 100, print.searchinfo = FALSE),
+               ivisat(formula = formula, data = data[1:500, ], t.pval = 0.01, iis = TRUE, turbo = TRUE, fast = TRUE, print.searchinfo = FALSE),
+               times = 3)
+# with more blocks takes longer, 278s instead of only 116s
+
+
+
 
