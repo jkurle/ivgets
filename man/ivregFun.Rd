@@ -4,7 +4,7 @@
 \alias{ivregFun}
 \title{User estimator ivreg for getsFun() and isat()}
 \usage{
-ivregFun(y, x, z, formula, tests)
+ivregFun(y, x, z, formula, tests, fast = FALSE)
 }
 \arguments{
 \item{y}{A numeric vector with no missing values.}
@@ -17,6 +17,9 @@ ivregFun(y, x, z, formula, tests)
 
 \item{tests}{A logical value whether to calculate the
 \code{\link[ivreg:ivregMethods]{ivreg::summary.ivreg()}} diagnostics.}
+
+\item{fast}{A logical value whether to speed up the 2SLS estimation but
+providing less details. Requires \code{tests == FALSE}.}
 }
 \value{
 A list with entries needed for model selection via \code{\link[gets:getsFun]{gets::getsFun()}}

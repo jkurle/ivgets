@@ -10,6 +10,8 @@
 #' @param formula A formula in the format \code{y ~ x1 + x2 | z1 + z2}.
 #' @param tests A logical value whether to calculate the
 #'   [ivreg::summary.ivreg()] diagnostics.
+#' @param fast A logical value whether to speed up the 2SLS estimation but
+#'   providing less details. Requires \code{tests == FALSE}.
 #'
 #' @return A list with entries needed for model selection via [gets::getsFun()]
 #'   or [gets::isat()].
@@ -23,7 +25,11 @@
 #' @importFrom stats as.formula coef residuals var vcov
 #' @importFrom ivreg ivreg
 
-ivregFun <- function(y, x, z, formula, tests) {
+ivregFun <- function(y, x, z, formula, tests, fast = FALSE) {
+
+  if (isTRUE(fast) & isTRUE(tests)) {
+    stop("When specify 'fast == TRUE' must set 'tests == FALSE'.")
+  }
 
   # extract formula
   # convert formula to character vector of length 1
@@ -77,7 +83,11 @@ ivregFun <- function(y, x, z, formula, tests) {
   # call ivreg::ivreg() if k > 0
   if (result$k > 0) { # have regressors
 
-    tmp <- ivreg(formula = as.formula(new_fml), data = df)
+    if (fast) {
+      tmp <- twosls(formula = as.formula(new_fml), data = df)
+    } else {
+      tmp <- ivreg(formula = as.formula(new_fml), data = df)
+    }
 
     result$coefficients <- coef(tmp) # only the beta 2nd stage coeff
     result$vcov <- vcov(tmp)

@@ -1,3 +1,6 @@
+# note: in likely update of gets (version 0.36 or 0.37), isat stores additional info in selection$aux$args
+# this is different from my own arguments stored in selection$aux$arguments
+
 test_that("ivisat() works correctly", {
 
   # set up a 2SLS structure (broadly)
@@ -181,6 +184,12 @@ test_that("isat.ivreg() works correctly", {
   attr(attr(s1$final$model, 'terms'), '.Environment') <- NULL
   attr(m1$final$model, 'row.names') <- as.character(attr(m1$final$model, 'row.names'))
   attr(s1$selection$aux$arguments$y, "names") <- NULL
+
+  # gets now also stores arguments in selection$aux$args, need to mute them for comparison
+  rownames(s1$selection$aux$args$user.estimator$z) <- NULL
+  attr(m1$selection$aux$args$user.estimator$formula, '.Environment') <- NULL
+  attr(s1$selection$aux$args$user.estimator$formula, '.Environment') <- NULL
+
   expect_identical(m1, s1)
 
   base2 <- ivreg::ivreg(formula = fml, data = df, model = FALSE)

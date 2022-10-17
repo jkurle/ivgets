@@ -7,6 +7,9 @@
 #' @param uis a matrix of regressors, or a list of matrices. If a list, the
 #'   matrices must have named columns that should not overlap with column names
 #'   of any other matrices in the list.
+#' @param fast A logical value indicating whether to speed up the 2SLS
+#'   estimation but providing less details. Requires \code{overid == NULL} and
+#'   \code{weak == NULL}.
 #'
 #' @return Returns a list of class \code{"ivisat"} with two named elements.
 #'   \code{$selection} stores the selection results from
@@ -33,7 +36,7 @@ ivisat <- function(
   max.paths = NULL, parallel.options = NULL, turbo = FALSE, tol = 1e-07,
   max.regs = NULL, print.searchinfo = TRUE, plot = NULL, alarm = FALSE,
   # new arguments
-  overid = NULL, weak = NULL) {
+  overid = NULL, weak = NULL, fast = FALSE) {
 
   if (is.list(uis)) {
     for (ele in seq_along(uis)) {
@@ -41,6 +44,10 @@ ivisat <- function(
         stop("The matrices in the list 'uis' all must have column names.")
       }
     }
+  }
+
+  if (isTRUE(fast) & (!is.null(overid) | !is.null(weak))) {
+    stop("When specifying 'fast = FALSE' must specify 'overid = NULL' and 'weak == NULL'. ")
   }
 
   # in isat, all regressors will be kept anyway
@@ -54,7 +61,7 @@ ivisat <- function(
     test <- TRUE
   }
   userest <- list(name = ivgets::ivregFun, z = setup$z,
-                  formula = as.formula(setup$fml), test = test)
+                  formula = as.formula(setup$fml), test = test, fast = fast)
 
   # user diagnostics
   is.reject.bad <- NULL
@@ -207,7 +214,7 @@ isat.ivreg <- function(
   max.paths = NULL, parallel.options = NULL, turbo = FALSE, tol = 1e-07,
   max.regs = NULL, print.searchinfo = TRUE, plot = NULL, alarm = FALSE,
   # new arguments
-  overid = NULL, weak = NULL,
+  overid = NULL, weak = NULL, fast = FALSE,
   ...) {
 
   # R's method dispatch will already return error if no method defined for that class
@@ -238,7 +245,8 @@ isat.ivreg <- function(
                 include.empty = include.empty, max.paths = max.paths,
                 parallel.options = parallel.options, turbo = turbo, tol = tol,
                 max.regs = max.regs, print.searchinfo = print.searchinfo,
-                plot = plot, alarm = alarm, overid = overid, weak = weak)
+                plot = plot, alarm = alarm, overid = overid, weak = weak,
+                fast = fast)
 
   return(aux)
 
