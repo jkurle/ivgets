@@ -1,6 +1,6 @@
 Package: ivgets
 Title: General to Specific Modeling and Indicator Saturation in 2SLS Models
-Version: 0.1.0.9000
+Version: 0.1.1
 Authors@R: 
     person("Kurle", "Jonas", email = "mail@jonaskurle.com", 
     role = c("aut","cre"), comment = c(ORCID = "0000-0003-2197-2012"))
