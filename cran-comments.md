@@ -14,7 +14,6 @@
 * winbuilder:
   * Windows Server 2022 x86_64-w64-mingw32 (64-bit), R development version (2022-10-11 r83083)
   * Windows Server 2022 x86_64-w64-mingw32 (64-bit), R version 4.2.1 (release)
-  * Windows Server 2008 x86_64-w64-mingw32 (64-bit), R version 4.1.3 (oldrelease)
 * own machine:
   * Windows 11, version 21H2, Build 22621, x86_64-w64-mingw32/x64 (64-bit), R version 4.1.3
 
