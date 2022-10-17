@@ -349,6 +349,7 @@ factory_indicators <- function(n) {
 #' should not be used outside of its usage in its current form. The class
 #' assignment is likely to change in the future.
 #'
+#' @importFrom stats delete.response lm.fit model.matrix model.response terms
 #' @keywords internal
 
 
@@ -409,6 +410,7 @@ twosls <- function(formula, data) {
 #' @inheritParams twosls
 #' @inheritSection twosls WARNING
 #'
+#' @importFrom stats delete.response lm.fit model.matrix model.response terms
 #' @keywords internal
 
 twosls.alt <- function(formula, data) { # nocov start
@@ -440,13 +442,13 @@ twosls.alt <- function(formula, data) { # nocov start
 
   # first stage
   qZ <- qr(Z, tol = 1e-07, LAPACK = FALSE)
-  fscoef <- solve.qr(qZ, x, tol = 1e-07)
+  fscoef <- solve.qr(qZ, X, tol = 1e-07)
   fsfit <- (Z %*% fscoef)
   colnames(fsfit) <- colnames(X)
 
   # second stage
   qXhat <- qr(fsfit, tol = 1e-07, LAPACK = FALSE)
-  sscoef <- solve.qr(qXhat, y, tol = 1e-07)
+  sscoef <- solve.qr(qXhat, Y, tol = 1e-07)
   notna <- which(!is.na(sscoef)) # regressors for which coefficient is not NA
   ssfit <- X[, notna, drop = FALSE] %*% sscoef[notna] # fitted values of second stage using actual x values
   names(ssfit) <- names(Y)

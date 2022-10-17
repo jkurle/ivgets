@@ -292,13 +292,19 @@ test_that("isativ() works correctly with argument 'fast'", {
   m3s$selection$time.finished <- NULL
   m3s$selection$date <- NULL
 
-  # of course they differ in the argument "fast"
+  # of course they differ in the argument "fast" (both in $aux and $aux$args)
   m1$selection$aux$user.estimator$fast <- NULL
   m1s$selection$aux$user.estimator$fast <- NULL
+  m1$selection$aux$args$user.estimator$fast <- NULL
+  m1s$selection$aux$args$user.estimator$fast <- NULL
   m2$selection$aux$user.estimator$fast <- NULL
   m2s$selection$aux$user.estimator$fast <- NULL
+  m2$selection$aux$args$user.estimator$fast <- NULL
+  m2s$selection$aux$args$user.estimator$fast <- NULL
   m3$selection$aux$user.estimator$fast <- NULL
   m3s$selection$aux$user.estimator$fast <- NULL
+  m3$selection$aux$args$user.estimator$fast <- NULL
+  m3s$selection$aux$args$user.estimator$fast <- NULL
 
   expect_identical(m1, m1s, ignore_attr = c("waldo_opts", ".Environment"))
   expect_identical(m2, m2s, ignore_attr = c("waldo_opts", ".Environment"))
