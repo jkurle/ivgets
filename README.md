@@ -39,7 +39,7 @@ devtools::install_github("jkurle/ivgets")
 ## Dependencies
 
 The *ivgets* package relies heavily on two packages. The estimation of
-2SLS models is based on the [ivreg](https://john-d-fox.github.io/ivreg/)
+2SLS models is based on the [ivreg](https://zeileis.github.io/ivreg/)
 package and model selection uses the
 [gets](http://www.sucarrat.net/R/gets/) package.
 
@@ -52,66 +52,41 @@ code.
 
 For reference, *ivgets* has been developed under the following versions:
 
--   R version: 4.1.0
--   ivreg: 0.5.0
--   gets: 0.27 (my own fork, pull request \#3, see `DESCRIPTION`)
--   stringr: 1.4.0
--   knitr: 1.33
--   rmarkdown: 2.8
--   testthat: 3.0.2
+- R version: 4.1.0
+- ivreg: 0.5.0
+- gets: 0.27 (my own fork, pull request \#3, see `DESCRIPTION`)
+- stringr: 1.4.0
+- knitr: 1.33
+- rmarkdown: 2.8
+- testthat: 3.0.2
 
 ## Example
 
 ### Setup
 
-Suppose we want to model the potential effect of some regressors
-![x\_{1}](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;x_%7B1%7D "x_{1}")
-to
-![x\_{11}](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;x_%7B11%7D "x_{11}")
-on a dependent variable
-![y](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;y "y").
-We are worried that
-![x\_{11}](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;x_%7B11%7D "x_{11}")
+Suppose we want to model the potential effect of some regressors $x_{1}$
+to $x_{11}$ on a dependent variable $y$. We are worried that $x_{11}$
 could be endogenous, so we use a 2SLS model to estimate the parameters.
-For the exogenous regressors
-![x\_{1}](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;x_%7B1%7D "x_{1}")
-to
-![x\_{10}](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;x_%7B10%7D "x_{10}")
-we are unsure whether they are relevant but our theory tells us that
-they might be relevant. So we want to include all of them in the
-original model and then use model selection to determine which
-regressors are actually relevant. Furthermore suppose we are concerned
-that the sample might contain outlying observations and that these
-outliers are biasing our results.
+For the exogenous regressors $x_{1}$ to $x_{10}$ we are unsure whether
+they are relevant but our theory tells us that they might be relevant.
+So we want to include all of them in the original model and then use
+model selection to determine which regressors are actually relevant.
+Furthermore suppose we are concerned that the sample might contain
+outlying observations and that these outliers are biasing our results.
 
 Formally, our structural equation is
 
-![
-y\_{i} = \\beta\_{1} x\_{1i} + \\beta\_{2}
-x\_{2i} + ... + \\beta\_{11} x\_{11i} + u\_{i} = x\_{i}^{\\prime} \\beta + u\_{i}
-](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;%0Ay_%7Bi%7D%20%3D%20%5Cbeta_%7B1%7D%20x_%7B1i%7D%20%2B%20%5Cbeta_%7B2%7D%0Ax_%7B2i%7D%20%2B%20...%20%2B%20%5Cbeta_%7B11%7D%20x_%7B11i%7D%20%2B%20u_%7Bi%7D%20%3D%20x_%7Bi%7D%5E%7B%5Cprime%7D%20%5Cbeta%20%2B%20u_%7Bi%7D%0A "
+$$
 y_{i} = \beta_{1} x_{1i} + \beta_{2}
 x_{2i} + ... + \beta_{11} x_{11i} + u_{i} = x_{i}^{\prime} \beta + u_{i}
-")
-
-.
+$$.
 
 The first stage can be written as
 
-![x\_{i} = \\Pi^{\\prime} z\_{i} + r\_{i}](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;x_%7Bi%7D%20%3D%20%5CPi%5E%7B%5Cprime%7D%20z_%7Bi%7D%20%2B%20r_%7Bi%7D "x_{i} = \Pi^{\prime} z_{i} + r_{i}")
+$$x_{i} = \Pi^{\prime} z_{i} + r_{i}$$,
 
-,
-
-where
-![z\_{i}](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;z_%7Bi%7D "z_{i}")
-includes all the exogenous regressors
-![x\_{1}](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;x_%7B1%7D "x_{1}")
-to
-![x\_{10}](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;x_%7B10%7D "x_{10}")
-and the excluded instruments
-![z\_{11}](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;z_%7B11%7D "z_{11}")
-and
-![z\_{12}](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;z_%7B12%7D "z_{12}").
+where $z_{i}$ includes all the exogenous regressors $x_{1}$ to $x_{10}$
+and the excluded instruments $z_{11}$ and $z_{12}$.
 
 ### Indicator Saturation
 
@@ -198,15 +173,7 @@ print(selection$keep)
 #> [1] "iis9"  "iis11" "iis43" "iis73" "x11"
 ```
 
-The final model has only retained the exogenous theory variables
-![x\_{1}](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;x_%7B1%7D "x_{1}")
-and
-![x\_{2}](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;x_%7B2%7D "x_{2}"),
-which is the correct selection. The data generating process only
-contained the variables
-![x\_{1}](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;x_%7B1%7D "x_{1}"),
-![x\_{2}](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;x_%7B2%7D "x_{2}"),
-and
-![x\_{11}](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;x_%7B11%7D "x_{11}").
-Their true parameters were `c(6, -5, 3)`, so the estimates are quite
-close.
+The final model has only retained the exogenous theory variables $x_{1}$
+and $x_{2}$, which is the correct selection. The data generating process
+only contained the variables $x_{1}$, $x_{2}$, and $x_{11}$. Their true
+parameters were `c(6, -5, 3)`, so the estimates are quite close.

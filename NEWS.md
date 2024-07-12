@@ -1,4 +1,6 @@
-# ivgets 0.1.1.9000
+# ivgets 0.1.2
+
+* tiny internal change to ensure compatibility with gets (>= 0.38)
 
 # ivgets 0.1.1
 

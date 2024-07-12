@@ -47,7 +47,7 @@ devtools::install_github("jkurle/ivgets")
 ## Dependencies
 
 The _ivgets_ package relies heavily on two packages. The estimation of 2SLS
-models is based on the [ivreg](https://john-d-fox.github.io/ivreg/) package and
+models is based on the [ivreg](https://zeileis.github.io/ivreg/) package and
 model selection uses the [gets](http://www.sucarrat.net/R/gets/) package.
 
 ### Versions

@@ -53,7 +53,7 @@ ivgets(
 
 \item{include.empty}{\code{logical}. If \code{TRUE}, then the empty model is added to the list of terminal models. If \code{FALSE} (default), then the empty model is not added, unless it is a terminal model in one of the paths }
 
-\item{max.paths}{\code{NULL} (default) or an integer greater than 0. If \code{NULL}, then there is no limit to the number of paths. If an integer (e.g. 1), then this integer constitutes the maximum number of paths searched (e.g. a single path) }
+\item{max.paths}{\code{NULL} (default) or an integer equal to or greater than 0. If \code{NULL}, then there is no limit to the number of paths. If an integer, for example 1, then this integer constitutes the maximum number of paths searched }
 
 \item{turbo}{\code{logical}. If \code{TRUE}, then (parts of) paths are not searched twice (or more) unnecessarily, thus yielding a significant potential for speed-gain. However, the checking of whether the search has arrived at a point it has already been comes with a slight computational overhead. Accordingly, if \code{turbo=TRUE}, then the total search time might in fact be higher than if \code{turbo=FALSE}. This happens if estimation is very fast, say, less than quarter of a second. Hence the default is \code{FALSE}}
 
