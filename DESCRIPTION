@@ -1,6 +1,6 @@
 Package: ivgets
 Title: General to Specific Modeling and Indicator Saturation in 2SLS Models
-Version: 0.1.1
+Version: 0.1.2
 Authors@R: 
     person("Kurle", "Jonas", email = "mail@jonaskurle.com", 
     role = c("aut","cre"), comment = c(ORCID = "0000-0003-2197-2012"))
@@ -11,10 +11,10 @@ License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.2
+RoxygenNote: 7.3.2
 Depends: 
     R (>= 2.10),
-    gets (>= 0.36),
+    gets (>= 0.38),
     ivreg
 Imports: 
     stats,

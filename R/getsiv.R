@@ -127,7 +127,7 @@ ivgets <- function(
   }
 
 
-  if ("- GUM does not pass one or more diagnostic checks" %in% a$messages) {
+  if ("- GUM does not pass one or more diagnostic checks\n" %in% a$messages) {
     warning("GUM does not pass one or more diagnostic checks. No selection.")
     out <- list(selection = a, final = NULL, keep = setup$keep.names)
   } else {

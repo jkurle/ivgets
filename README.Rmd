@@ -47,7 +47,7 @@ devtools::install_github("jkurle/ivgets")
 ## Dependencies
 
 The _ivgets_ package relies heavily on two packages. The estimation of 2SLS
-models is based on the [ivreg](https://john-d-fox.github.io/ivreg/) package and
+models is based on the [ivreg](https://zeileis.github.io/ivreg/) package and
 model selection uses the [gets](http://www.sucarrat.net/R/gets/) package.
 
 ### Versions
@@ -55,16 +55,6 @@ model selection uses the [gets](http://www.sucarrat.net/R/gets/) package.
 _ivgets_ avoids specifying minimum or maximum versions of the dependencies in
 the `DESCRIPTION` file if possible. This is to avoid forcing users to update
 their packages and potentially break existing code.
-
-For reference, _ivgets_ has been developed under the following versions:
-
-* R version: 4.1.0
-* ivreg: 0.5.0
-* gets: 0.27 (my own fork, pull request #3, see `DESCRIPTION`)
-* stringr: 1.4.0
-* knitr: 1.33
-* rmarkdown: 2.8
-* testthat: 3.0.2
 
 ## Example
 

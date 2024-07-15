@@ -1,7 +1,7 @@
 # CRAN comments for: ivgets
-#### 17 October 2022, version 0.1.1
+#### 12 July 2024, version 0.1.2
 
-### fix package to restore compatibility with gets version 0.37
+### fix package to restore compatibility with incoming gets version 0.38
 
 ## Test environments
 
@@ -15,7 +15,7 @@
   * Windows Server 2022 x86_64-w64-mingw32 (64-bit), R development version (2022-10-11 r83083)
   * Windows Server 2022 x86_64-w64-mingw32 (64-bit), R version 4.2.1 (release)
 * own machine:
-  * Windows 11, version 21H2, Build 22621, x86_64-w64-mingw32/x64 (64-bit), R version 4.1.3
+  * Windows 11, version 10.0.22631, Build 22631, x86_64-w64-mingw32/x64 (64-bit), R version 4.4.1
 
 ## R CMD check results
 
@@ -23,7 +23,7 @@ There were no ERRORs, WARNINGs, or NOTEs.
 
 ## Downstream Dependencies
 
-* robust2sls: maintained by myself, still compatible [and will be updated soon]
+* robust2sls: maintained by myself, still compatible
 
 ## Past NOTE (v0.1.0):
 
